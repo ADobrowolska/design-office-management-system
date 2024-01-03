@@ -6,5 +6,6 @@ CREATE TABLE app_user (
     first_name VARCHAR(250) NOT NULL,
     last_name VARCHAR(250) NOT NULL,
     email VARCHAR(250) NOT NULL,
-    password VARCHAR(250) NOT NULL
+    password VARCHAR(250) NOT NULL,
+    role VARCHAR(250) NOT NULL
 );
