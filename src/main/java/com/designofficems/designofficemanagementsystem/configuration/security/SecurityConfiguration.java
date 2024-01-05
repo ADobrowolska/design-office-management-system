@@ -30,7 +30,11 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/*").permitAll()
+                        .requestMatchers(
+                                "/api/auth/*",
+                                "/swagger-ui/*",
+                                "/v3/api-docs",
+                                "/v3/api-docs/swagger-config").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
