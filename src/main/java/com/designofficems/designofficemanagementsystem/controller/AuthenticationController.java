@@ -5,6 +5,7 @@ import com.designofficems.designofficemanagementsystem.service.AuthenticationSer
 import com.designofficems.designofficemanagementsystem.util.AuthenticationRequest;
 import com.designofficems.designofficemanagementsystem.util.AuthenticationResponse;
 import com.designofficems.designofficemanagementsystem.util.RegisterRequest;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import javax.management.InstanceAlreadyExistsException;
 
 @RestController
 @RequestMapping("/api/auth")
+@SecurityRequirement(name = "Bearer Authentication")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
