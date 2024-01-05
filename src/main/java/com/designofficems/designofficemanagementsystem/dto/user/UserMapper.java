@@ -42,7 +42,7 @@ public class UserMapper {
     public Credentials mapAuthenticationRequestToCredenrialsModel(AuthenticationRequest request) {
         return Credentials.builder()
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(request.getPassword())
                 .build();
     }
 
