@@ -17,4 +17,9 @@ public class Department {
     private Integer id;
     private String name;
 
+    public static Department ofId(Integer id) {
+        Department department = new Department();
+        department.setId(id);
+        return department;
+    }
 }
