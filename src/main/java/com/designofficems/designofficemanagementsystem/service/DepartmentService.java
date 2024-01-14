@@ -6,15 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
+    private final EmployeeService employeeService;
 
     @Autowired
-    public DepartmentService(DepartmentRepository departmentRepository) {
+    public DepartmentService(DepartmentRepository departmentRepository, EmployeeService employeeService) {
         this.departmentRepository = departmentRepository;
+        this.employeeService = employeeService;
     }
 
     public List<Department> getDepartments() {
@@ -24,4 +27,10 @@ public class DepartmentService {
     public List<Department> getDepartmentsByParam(String searchBy) {
         return departmentRepository.findAllDepartmentsContainingParam(searchBy.toLowerCase());
     }
+
+    public Optional<Department> findById(Integer id) {
+        return departmentRepository.findById(id);
+    }
+
+
 }

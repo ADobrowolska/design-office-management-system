@@ -1,11 +1,14 @@
 package com.designofficems.designofficemanagementsystem.service;
 
+import com.designofficems.designofficemanagementsystem.model.Department;
 import com.designofficems.designofficemanagementsystem.model.Employee;
 import com.designofficems.designofficemanagementsystem.model.User;
 import com.designofficems.designofficemanagementsystem.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class EmployeeService {
@@ -38,4 +41,11 @@ public class EmployeeService {
         existed.setLastName(employee.getLastName());
         return employeeRepository.save(existed);
     }
+
+    public List<Employee> getEmployeeByDepartment(Department department) {
+        return employeeRepository.findAllByDepartment(department);
+    }
+
+
+
 }
