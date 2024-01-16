@@ -14,12 +14,22 @@ public class ProjectMapper {
                 .build();
     }
 
+    public static Project mapToProjectModel(ProjectDTO projectDTO) {
+        return Project.builder()
+                .id(projectDTO.getId())
+                .name(projectDTO.getName())
+                .description(projectDTO.getDescription())
+                .budget(projectDTO.getBudget())
+                .build();
+    }
+
     public static ProjectDTO mapToProjectDTO(Project project) {
         return ProjectDTO.builder()
                 .id(project.getId())
                 .name(project.getName())
                 .budget(project.getBudget())
-                .employeeId(project.getEmployee().getId())
+                .description(project.getDescription())
+                .employeeId(project.getEmployee() != null ?project.getEmployee().getId() : null)
                 .build();
     }
 

@@ -6,7 +6,7 @@ CREATE TABLE project (
     name VARCHAR(250) NOT NULL,
     budget DECIMAL NOT NULL,
     description TEXT,
-    employee_id INT NOT NULL
+    employee_id INT
 );
 
 ALTER TABLE project

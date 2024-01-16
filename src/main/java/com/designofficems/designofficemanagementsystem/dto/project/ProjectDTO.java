@@ -12,5 +12,6 @@ public class ProjectDTO {
     private Integer id;
     private String name;
     private BigDecimal budget;
+    private String description;
     private Integer employeeId;
 }
