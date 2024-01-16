@@ -12,12 +12,10 @@ import java.util.Optional;
 public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
-    private final EmployeeService employeeService;
 
     @Autowired
-    public DepartmentService(DepartmentRepository departmentRepository, EmployeeService employeeService) {
+    public DepartmentService(DepartmentRepository departmentRepository) {
         this.departmentRepository = departmentRepository;
-        this.employeeService = employeeService;
     }
 
     public List<Department> getDepartments() {

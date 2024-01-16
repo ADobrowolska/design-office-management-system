@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.InstanceAlreadyExistsException;
+import java.util.List;
 
 @Service
 public class ProjectService {
@@ -28,14 +29,28 @@ public class ProjectService {
 
     @Transactional
     public Project editProject(Project project) {
-        Project existed = getProject(project.getId());
+        Project existed = findById(project.getId());
         existed.setName(project.getName());
         existed.setBudget(project.getBudget());
         existed.setDescription(project.getDescription());
         return projectRepository.save(existed);
     }
 
-    public Project getProject(int id) {
+    public Project findById(int id) {
         return projectRepository.findById(id).orElseThrow();
+    }
+
+    public List<Project> getProjects() {
+        return projectRepository.findAll();
+    }
+
+
+    public List<Project> getProjectsByParam(String searchBy) {
+        return projectRepository.findAllProjectsContainingParam(searchBy.toLowerCase());
+    }
+
+
+    public boolean checkIfProjectExists(Project project) {
+        return projectRepository.existsByName(project.getName());
     }
 }

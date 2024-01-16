@@ -34,6 +34,10 @@ public class EmployeeService {
         return employee;
     }
 
+    public Employee getEmployee(Integer employeeId) {
+        return employeeRepository.findById(employeeId).orElseThrow();
+    }
+
     @Transactional
     public Employee editEmployee(Employee employee) {
         Employee existed = getEmployee();
@@ -46,6 +50,7 @@ public class EmployeeService {
         return employeeRepository.findAllByDepartment(department);
     }
 
-
-
+    public boolean checkIfEmployeeExists(Integer employeeId) {
+        return employeeRepository.existsById(employeeId);
+    }
 }
