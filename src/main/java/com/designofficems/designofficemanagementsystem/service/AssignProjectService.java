@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AssignProjectService {
@@ -21,7 +22,8 @@ public class AssignProjectService {
     }
 
     public List<Employee> getEmployeeByProject(Project project) {
-        return assignProjectRepository.findAllByProject(project);
+        List<AssignProject> allByProject = assignProjectRepository.findAllByProject(project);
+        return allByProject.stream().map(AssignProject::getEmployee).collect(Collectors.toList());
     }
 
     @Transactional
