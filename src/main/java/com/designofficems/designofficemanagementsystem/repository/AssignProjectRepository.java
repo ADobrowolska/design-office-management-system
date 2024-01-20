@@ -1,6 +1,7 @@
 package com.designofficems.designofficemanagementsystem.repository;
 
 import com.designofficems.designofficemanagementsystem.model.AssignProject;
+import com.designofficems.designofficemanagementsystem.model.Employee;
 import com.designofficems.designofficemanagementsystem.model.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,4 +11,5 @@ public interface AssignProjectRepository extends JpaRepository<AssignProject, In
 
     List<AssignProject> findAllByProject(Project project);
 
+    List<AssignProject> findAllByEmployee(Employee employee);
 }

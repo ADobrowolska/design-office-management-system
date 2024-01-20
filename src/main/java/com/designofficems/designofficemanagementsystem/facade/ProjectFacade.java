@@ -32,14 +32,14 @@ public class ProjectFacade {
 
     public ProjectEmployeeDTO getProjectWithEmployees(Integer projectId) {
         Project project = projectService.findById(projectId);
-        return ProjectMapper.mapToProjectEmployeeDTO(project, assignProjectService.getEmployeeByProject(project));
+        return ProjectMapper.mapToProjectEmployeeDTO(project, assignProjectService.getEmployeesByProject(project));
     }
 
     public List<ProjectEmployeeDTO> getProjectsWithEmployees() {
         List<Project> projects = projectService.getProjects();
         List<ProjectEmployeeDTO> projectEmployeeDTOs = new ArrayList<>();
         for (Project proj : projects) {
-            projectEmployeeDTOs.add(ProjectMapper.mapToProjectEmployeeDTO(proj, assignProjectService.getEmployeeByProject(proj)));
+            projectEmployeeDTOs.add(ProjectMapper.mapToProjectEmployeeDTO(proj, assignProjectService.getEmployeesByProject(proj)));
         }
         return projectEmployeeDTOs;
     }

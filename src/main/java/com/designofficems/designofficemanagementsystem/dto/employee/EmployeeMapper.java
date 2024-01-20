@@ -1,7 +1,9 @@
 package com.designofficems.designofficemanagementsystem.dto.employee;
 
+import com.designofficems.designofficemanagementsystem.dto.project.ProjectMapper;
 import com.designofficems.designofficemanagementsystem.model.Department;
 import com.designofficems.designofficemanagementsystem.model.Employee;
+import com.designofficems.designofficemanagementsystem.model.Project;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +25,25 @@ public class EmployeeMapper {
                 .firstName(employeeDTO.getFirstName())
                 .lastName(employeeDTO.getLastName())
                 .department(Department.ofId(employeeDTO.getDepartmentId()))
+                .build();
+    }
+
+    public static Employee mapToEmployeeModel(EmployeeProjectDTO employeeProjectDTO) {
+        return Employee.builder()
+                .id(employeeProjectDTO.getId())
+                .firstName(employeeProjectDTO.getFirstName())
+                .lastName(employeeProjectDTO.getLastName())
+                .department(Department.ofId(employeeProjectDTO.getId()))
+                .build();
+    }
+
+    public static EmployeeProjectDTO mapToEmployeeProjectDTO(Employee employee, List<Project> projects) {
+        return EmployeeProjectDTO.builder()
+                .id(employee.getId())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
+                .departmentId(employee.getDepartment().getId())
+                .projects(ProjectMapper.mapToProjectDTOs(projects))
                 .build();
     }
 

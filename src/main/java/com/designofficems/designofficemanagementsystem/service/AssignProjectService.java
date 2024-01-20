@@ -21,9 +21,14 @@ public class AssignProjectService {
         this.assignProjectRepository = assignProjectRepository;
     }
 
-    public List<Employee> getEmployeeByProject(Project project) {
+    public List<Employee> getEmployeesByProject(Project project) {
         List<AssignProject> allByProject = assignProjectRepository.findAllByProject(project);
         return allByProject.stream().map(AssignProject::getEmployee).collect(Collectors.toList());
+    }
+
+    public List<Project> getProjectsByEmployee(Employee employee) {
+        List<AssignProject> allByEmployee = assignProjectRepository.findAllByEmployee(employee);
+        return allByEmployee.stream().map(AssignProject::getProject).collect(Collectors.toList());
     }
 
     @Transactional
