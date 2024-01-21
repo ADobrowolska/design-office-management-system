@@ -6,6 +6,7 @@ import com.designofficems.designofficemanagementsystem.facade.EmployeeRateFacade
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -20,11 +21,14 @@ public class EmployeeRateController {
         this.employeeRateFacede = employeeRateFacede;
     }
 
-    @GetMapping("/employeerates")
+    @GetMapping("/employee/rate")
     public ResponseEntity<List<EmployeeRateDTO>> getEmployeeRate() {
         return ResponseEntity.ok(EmployeeRateMapper.mapToEmployeeRateDTOs(employeeRateFacede.getEmployeeRate()));
     }
 
-
+    @GetMapping("/employee/{id}/rate")
+    public ResponseEntity<List<EmployeeRateDTO>> getEmployeeRate(@PathVariable Integer employeeId) {
+        return ResponseEntity.ok(EmployeeRateMapper.mapToEmployeeRateDTOs(employeeRateFacede.getEmployeeRate(employeeId)));
+    }
 
 }
