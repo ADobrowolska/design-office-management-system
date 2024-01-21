@@ -2,6 +2,9 @@ package com.designofficems.designofficemanagementsystem.dto.employeerate;
 
 import com.designofficems.designofficemanagementsystem.model.EmployeeRate;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class EmployeeRateMapper {
 
     public static EmployeeRateDTO mapToEmployeeRateDTO(EmployeeRate employeeRate) {
@@ -22,6 +25,18 @@ public class EmployeeRateMapper {
                 .rate(employeeRateDTO.getRate())
                 .employee(EmployeeRate.ofId(employeeRateDTO.getEmployeeId()))
                 .build();
+    }
+
+    public static List<EmployeeRateDTO> mapToEmployeeRateDTOs(List<EmployeeRate> employeeRates) {
+        return employeeRates.stream()
+                .map(EmployeeRateMapper::mapToEmployeeRateDTO)
+                .collect(Collectors.toList());
+    }
+
+    public static List<EmployeeRate> mapToEmployeeRates(List<EmployeeRateDTO> employeeRateDTOs) {
+        return employeeRateDTOs.stream()
+                .map(EmployeeRateMapper::mapToEmployeeRateModel)
+                .collect(Collectors.toList());
     }
 
 }
