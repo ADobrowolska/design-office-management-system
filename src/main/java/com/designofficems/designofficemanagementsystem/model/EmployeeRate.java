@@ -29,4 +29,9 @@ public class EmployeeRate {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
+    public static Employee ofId(Integer employeeId) {
+        Employee employee = new Employee();
+        employee.setId(employeeId);
+        return employee;
+    }
 }
