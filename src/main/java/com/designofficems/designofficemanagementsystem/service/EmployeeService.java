@@ -5,6 +5,7 @@ import com.designofficems.designofficemanagementsystem.model.Employee;
 import com.designofficems.designofficemanagementsystem.model.User;
 import com.designofficems.designofficemanagementsystem.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +36,10 @@ public class EmployeeService {
     }
 
     public Employee getEmployee(Integer employeeId) {
-        return employeeRepository.findById(employeeId).orElseThrow();
+        if (getEmployee().getId().equals(employeeId)) {
+            return employeeRepository.findById(employeeId).orElseThrow();
+        }
+        throw new AccessDeniedException("No access to employee %s".formatted(employeeId));
     }
 
     @Transactional

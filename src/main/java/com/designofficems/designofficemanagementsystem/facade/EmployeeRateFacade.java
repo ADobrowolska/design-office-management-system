@@ -25,4 +25,12 @@ public class EmployeeRateFacade {
         Employee employee = employeeService.getEmployee();
         return employeeRateRepository.findAllByEmployee(employee);
     }
+
+    public List<EmployeeRate> getEmployeeRate(int employeeId) {
+        Employee employee = employeeService.getEmployee(employeeId);
+        return employeeRateRepository.findAllByEmployee(employee);
+    }
+
+
+
 }
