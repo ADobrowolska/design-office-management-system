@@ -14,21 +14,24 @@ import java.util.List;
 @RestController
 public class EmployeeRateController {
 
-    private final EmployeeRateFacade employeeRateFacede;
+    private final EmployeeRateFacade employeeRateFacade;
 
     @Autowired
     public EmployeeRateController(EmployeeRateFacade employeeRateFacede) {
-        this.employeeRateFacede = employeeRateFacede;
+        this.employeeRateFacade = employeeRateFacede;
     }
 
     @GetMapping("/employee/rate")
     public ResponseEntity<List<EmployeeRateDTO>> getEmployeeRate() {
-        return ResponseEntity.ok(EmployeeRateMapper.mapToEmployeeRateDTOs(employeeRateFacede.getEmployeeRate()));
+        return ResponseEntity.ok(EmployeeRateMapper.mapToEmployeeRateDTOs(employeeRateFacade.getEmployeeRate()));
     }
 
     @GetMapping("/employee/{id}/rate")
     public ResponseEntity<List<EmployeeRateDTO>> getEmployeeRate(@PathVariable Integer employeeId) {
-        return ResponseEntity.ok(EmployeeRateMapper.mapToEmployeeRateDTOs(employeeRateFacede.getEmployeeRate(employeeId)));
+        return ResponseEntity.ok(EmployeeRateMapper.mapToEmployeeRateDTOs(employeeRateFacade.getEmployeeRate(employeeId)));
     }
+
+
+
 
 }
