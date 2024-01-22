@@ -1,5 +1,6 @@
 package com.designofficems.designofficemanagementsystem.controller;
 
+import com.designofficems.designofficemanagementsystem.dto.employeerate.CreateEmployeeRateDTO;
 import com.designofficems.designofficemanagementsystem.dto.employeerate.EmployeeRateDTO;
 import com.designofficems.designofficemanagementsystem.dto.employeerate.EmployeeRateMapper;
 import com.designofficems.designofficemanagementsystem.facade.EmployeeRateFacade;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -31,6 +33,11 @@ public class EmployeeRateController {
         return ResponseEntity.ok(EmployeeRateMapper.mapToEmployeeRateDTOs(employeeRateFacade.getEmployeeRate(employeeId)));
     }
 
+    @PostMapping("/employee/rate")
+    public ResponseEntity<EmployeeRateDTO> addEmployeeRate(CreateEmployeeRateDTO employeeRateDTO) {
+        return ResponseEntity.ok(EmployeeRateMapper.mapToEmployeeRateDTO(
+                employeeRateFacade.addEmployeeRate(EmployeeRateMapper.mapToEmployeeRateModel(employeeRateDTO))));
+    }
 
 
 

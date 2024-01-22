@@ -27,6 +27,14 @@ public class EmployeeRateMapper {
                 .build();
     }
 
+    public static EmployeeRate mapToEmployeeRateModel(CreateEmployeeRateDTO employeeRateDTO) {
+        return EmployeeRate.builder()
+                .name(employeeRateDTO.getName())
+                .category(employeeRateDTO.getCategory())
+                .employee(EmployeeRate.ofId(employeeRateDTO.getEmployeeId()))
+                .build();
+    }
+
     public static List<EmployeeRateDTO> mapToEmployeeRateDTOs(List<EmployeeRate> employeeRates) {
         return employeeRates.stream()
                 .map(EmployeeRateMapper::mapToEmployeeRateDTO)
