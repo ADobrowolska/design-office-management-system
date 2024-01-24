@@ -22,7 +22,7 @@ public class EmployeeRateService {
         return employeeRateRepository.save(employeeRate);
     }
 
-    public List<EmployeeRate> getEmployeeRate(Employee employee) {
+    public List<EmployeeRate> getEmployeeRates(Employee employee) {
         return employeeRateRepository.findAllByEmployee(employee);
     }
 }
