@@ -26,7 +26,7 @@ public class EmployeeRateFacade {
         return employeeRateService.getEmployeeRates(employee);
     }
 
-    public List<EmployeeRate> getEmployeeRate(int employeeId) {
+    public List<EmployeeRate> getEmployeeRate(Integer employeeId) {
         Employee employee = employeeService.getEmployee(employeeId);
         List<EmployeeRate> employeeRates = employeeRateService.getEmployeeRates(employee);
         return employeeRates;

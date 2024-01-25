@@ -26,8 +26,8 @@ public class EmployeeRateController {
     }
 
     @GetMapping("/employee/{id}/rate")
-    public ResponseEntity<List<EmployeeRateDTO>> getEmployeeRate(@PathVariable Integer employeeId) {
-        return ResponseEntity.ok(EmployeeRateMapper.mapToEmployeeRateDTOs(employeeRateFacade.getEmployeeRate(employeeId)));
+    public ResponseEntity<List<EmployeeRateDTO>> getEmployeeRate(@PathVariable Integer id) {
+        return ResponseEntity.ok(EmployeeRateMapper.mapToEmployeeRateDTOs(employeeRateFacade.getEmployeeRate(id)));
     }
 
     @PostMapping("/employee/rate")

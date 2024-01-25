@@ -35,7 +35,7 @@ public class EmployeeService {
         return employee;
     }
 
-    public Employee getEmployee(Integer employeeId) {
+    public Employee getEmployee(int employeeId) {
         if (getEmployee().getId().equals(employeeId)) {
             return employeeRepository.findById(employeeId).orElseThrow();
         }
