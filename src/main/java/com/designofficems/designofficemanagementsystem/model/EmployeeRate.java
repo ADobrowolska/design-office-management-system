@@ -23,6 +23,7 @@ public class EmployeeRate {
     @Column(name = "category", columnDefinition = "varchar")
     @Enumerated(EnumType.STRING)
     private CategoryType category;
+
     private double rate;
 
     @ManyToOne

@@ -23,15 +23,20 @@ public class EmployeeRateFacade {
 
     public List<EmployeeRate> getEmployeeRate() {
         Employee employee = employeeService.getEmployee();
-        return employeeRateService.getEmployeeRate(employee);
+        return employeeRateService.getEmployeeRates(employee);
     }
 
     public List<EmployeeRate> getEmployeeRate(int employeeId) {
         Employee employee = employeeService.getEmployee(employeeId);
-        return employeeRateService.getEmployeeRate(employee);
+        List<EmployeeRate> employeeRates = employeeRateService.getEmployeeRates(employee);
+        return employeeRates;
     }
 
     public EmployeeRate addEmployeeRate(EmployeeRate employeeRate) {
         return employeeRateService.addEmployeeRate(employeeRate);
+    }
+
+    public EmployeeRate editEmployeeRate(EmployeeRate employeeRate) {
+        return employeeRateService.editEmployeeRate(employeeRate);
     }
 }
