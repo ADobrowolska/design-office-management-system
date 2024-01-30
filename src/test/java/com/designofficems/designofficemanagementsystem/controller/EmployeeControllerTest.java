@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -73,7 +74,40 @@ class EmployeeControllerTest extends BaseTest {
         EmployeeDTO receivedEmployee = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), EmployeeDTO.class);
         assertThat(receivedEmployee).isNotNull();
         assertThat(receivedEmployee.getDepartmentId()).isEqualTo(department.getId());
+        assertThat(receivedEmployee.getFirstName()).isEqualTo("Anna");
     }
+
+    @Test
+    void shouldAddEmployee() throws Exception {
+        EmployeeDTO newEmployee = EmployeeDTO.builder()
+                .firstName("Jan")
+                .lastName("kowalski")
+                .departmentId(department.getId())
+                .build();
+
+        MvcResult postMvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/employees")
+                        .headers(getAuthorizedHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newEmployee))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        EmployeeDTO receivedEmployee = objectMapper.readValue(postMvcResult.getResponse().getContentAsString(), EmployeeDTO.class);
+
+        MvcResult getMvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/employees")
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        EmployeeDTO fetchedEmployee = objectMapper.readValue(getMvcResult.getResponse().getContentAsString(), EmployeeDTO.class);
+
+        assertThat(fetchedEmployee).isNotNull();
+        assertThat(fetchedEmployee.getFirstName()).isEqualTo(newEmployee.getFirstName());
+        assertThat(fetchedEmployee.getDepartmentId()).isEqualTo(newEmployee.getDepartmentId());
+    }
+
+
 
 
 
