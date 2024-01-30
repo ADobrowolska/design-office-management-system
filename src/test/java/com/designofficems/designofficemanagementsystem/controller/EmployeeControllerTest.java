@@ -1,6 +1,7 @@
 package com.designofficems.designofficemanagementsystem.controller;
 
 import com.designofficems.designofficemanagementsystem.dto.employee.EmployeeDTO;
+import com.designofficems.designofficemanagementsystem.dto.employee.EmployeeMapper;
 import com.designofficems.designofficemanagementsystem.model.Department;
 import com.designofficems.designofficemanagementsystem.model.Employee;
 import com.designofficems.designofficemanagementsystem.repository.DepartmentRepository;
@@ -106,6 +107,36 @@ class EmployeeControllerTest extends BaseTest {
         assertThat(fetchedEmployee.getFirstName()).isEqualTo(newEmployee.getFirstName());
         assertThat(fetchedEmployee.getDepartmentId()).isEqualTo(newEmployee.getDepartmentId());
     }
+
+    @Test
+    void shouldEditEMployee() throws Exception {
+        Employee employee = createEmployee();
+        EmployeeDTO employeeToEdit = EmployeeMapper.mapToEmployeeDTO(employee);
+        employeeToEdit.setFirstName("Katarzyna");
+
+        MvcResult putMvcResult = mockMvc.perform(MockMvcRequestBuilders.put("/employee")
+                        .headers(getAuthorizedHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeToEdit))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        EmployeeDTO receivedEmployee = objectMapper.readValue(putMvcResult.getResponse().getContentAsString(), EmployeeDTO.class);
+
+        MvcResult getMvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/employees")
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        EmployeeDTO fetchedEmployee = objectMapper.readValue(getMvcResult.getResponse().getContentAsString(), EmployeeDTO.class);
+
+        assertThat(fetchedEmployee.getFirstName()).isEqualTo(employeeToEdit.getFirstName());
+
+
+    }
+
+
 
 
 
