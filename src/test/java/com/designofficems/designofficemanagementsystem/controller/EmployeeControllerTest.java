@@ -109,7 +109,7 @@ class EmployeeControllerTest extends BaseTest {
     }
 
     @Test
-    void shouldEditEMployee() throws Exception {
+    void shouldEditEmployee() throws Exception {
         Employee employee = createEmployee();
         EmployeeDTO employeeToEdit = EmployeeMapper.mapToEmployeeDTO(employee);
         employeeToEdit.setFirstName("Katarzyna");
