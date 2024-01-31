@@ -2,12 +2,17 @@ package com.designofficems.designofficemanagementsystem.controller;
 
 import com.designofficems.designofficemanagementsystem.dto.employee.EmployeeDTO;
 import com.designofficems.designofficemanagementsystem.dto.employee.EmployeeMapper;
+import com.designofficems.designofficemanagementsystem.dto.employee.EmployeeProjectDTO;
+import com.designofficems.designofficemanagementsystem.dto.project.ProjectEmployeeDTO;
 import com.designofficems.designofficemanagementsystem.model.Department;
 import com.designofficems.designofficemanagementsystem.model.Employee;
+import com.designofficems.designofficemanagementsystem.model.Project;
 import com.designofficems.designofficemanagementsystem.repository.DepartmentRepository;
 import com.designofficems.designofficemanagementsystem.repository.EmployeeRepository;
+import com.designofficems.designofficemanagementsystem.repository.ProjectRepository;
 import com.designofficems.designofficemanagementsystem.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +23,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,6 +45,9 @@ class EmployeeControllerTest extends BaseTest {
 
     @Autowired
     private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     private Department department;
 
@@ -61,6 +71,14 @@ class EmployeeControllerTest extends BaseTest {
         employee.setDepartment(department);
         employee.setUser(getCurrentUser());
         return employeeRepository.save(employee);
+    }
+
+    private Project createProject() {
+        Project project = new Project();
+        project.setName(RandomStringUtils.randomAlphabetic(10));
+        project.setDescription(RandomStringUtils.randomAlphabetic(10));
+        project.setBudget(BigDecimal.valueOf(6500000.00));
+        return projectRepository.save(project);
     }
 
     @Test
@@ -132,15 +150,42 @@ class EmployeeControllerTest extends BaseTest {
         EmployeeDTO fetchedEmployee = objectMapper.readValue(getMvcResult.getResponse().getContentAsString(), EmployeeDTO.class);
 
         assertThat(fetchedEmployee.getFirstName()).isEqualTo(employeeToEdit.getFirstName());
+    }
 
+    @Test
+    void shouldGetEmployeeWithProject() throws Exception {
+        Project project = createProject();
+        Employee employee = createEmployee();
+
+        MvcResult putMvcResult = mockMvc.perform(MockMvcRequestBuilders.put("/projects/assign")
+                        .param("employeeId", employee.getId().toString())
+                        .headers(getAuthorizedHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(mapToProjectEmployeeDTO(project)))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+
+        MvcResult getMvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/employees/project")
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        EmployeeProjectDTO fetchedEmployee = objectMapper.readValue(getMvcResult.getResponse().getContentAsString(), EmployeeProjectDTO.class);
+
+        assertThat(fetchedEmployee.getProjects().size()).isEqualTo(1);
 
     }
 
-
-
-
-
-
+    private ProjectEmployeeDTO mapToProjectEmployeeDTO(Project project) {
+        return ProjectEmployeeDTO.builder()
+                .id(project.getId())
+                .name(project.getName())
+                .description(project.getDescription())
+                .budget(project.getBudget())
+                .build();
+    }
 
 
 }
