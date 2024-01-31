@@ -29,7 +29,6 @@ public class EmployeeRateService {
     }
 
     public EmployeeRate getEmployeeRate(Employee employee, CategoryType categoryType) {
-
         return employeeRateRepository.findByEmployeeAndCategory(employee, categoryType);
     }
 
