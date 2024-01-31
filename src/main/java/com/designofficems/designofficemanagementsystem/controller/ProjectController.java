@@ -60,7 +60,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectFacade.getProjectsWithEmployees());
     }
 
-    @PutMapping("/projects/{id}/assign")
+    @PutMapping("/projects/assign")
     public ResponseEntity<AssignProjectDTO> editProjectEmployee(@RequestBody ProjectEmployeeDTO projectDTO, @RequestParam(required = false) Integer employeeId) {
         AssignProjectDTO receivedAssignProjectDTO = projectFacade.editProjectEmployee(ProjectMapper.mapToProjectModel(projectDTO), employeeId);
         return ResponseEntity.ok(receivedAssignProjectDTO);
