@@ -2,6 +2,7 @@ package com.designofficems.designofficemanagementsystem.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.time.Instant;
 @Entity
 @Table(name = "cost")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Cost {
@@ -19,7 +21,7 @@ public class Cost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Instant occurrenceDate;
-    private BigDecimal quantity;
+    private Long quantity;
 
     @ManyToOne
     @JoinColumn(name = "employee_rate_id")

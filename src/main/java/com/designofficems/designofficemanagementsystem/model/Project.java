@@ -23,4 +23,9 @@ public class Project {
     private BigDecimal budget;
     private String description;
 
+    public static Project ofIf(Integer projectId) {
+        Project project = new Project();
+        project.setId(projectId);
+        return project;
+    }
 }

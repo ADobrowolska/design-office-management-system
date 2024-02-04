@@ -12,7 +12,7 @@ CREATE TABLE employee_rate (
 CREATE TABLE cost (
     id INT AUTO_INCREMENT PRIMARY KEY,
     occurrence_date TIMESTAMP NOT NULL,
-    quantity DECIMAL NOT NULL,
+    quantity INTEGER NOT NULL,
     employee_rate_id INT NOT NULL,
     project_id INT NOT NULL
 );
