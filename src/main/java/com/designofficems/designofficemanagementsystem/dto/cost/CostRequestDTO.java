@@ -11,6 +11,7 @@ import java.time.LocalDate;
 public class CostRequestDTO {
 
     private LocalDate occurrenceDate;
+    private LocalDate creationDate;
     private Long quantity;
     private Integer projectId;
 

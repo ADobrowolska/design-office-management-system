@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
@@ -21,6 +20,7 @@ public class Cost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Instant occurrenceDate;
+    private Instant creationDate;
     private Long quantity;
 
     @ManyToOne
