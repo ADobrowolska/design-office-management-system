@@ -6,13 +6,13 @@ import com.designofficems.designofficemanagementsystem.model.Employee;
 import com.designofficems.designofficemanagementsystem.model.EmployeeRate;
 import com.designofficems.designofficemanagementsystem.model.Project;
 import com.designofficems.designofficemanagementsystem.repository.CostRepository;
-import com.designofficems.designofficemanagementsystem.repository.EmployeeRateRepository;
-import com.designofficems.designofficemanagementsystem.util.CategoryType;
 import com.designofficems.designofficemanagementsystem.util.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +22,11 @@ public class CostService {
 
     private final CostRepository costRepository;
     private final EmployeeRateService employeeRateService;
-    private final EmployeeRateRepository employeeRateRepository;
 
     @Autowired
-    public CostService(CostRepository costRepository, EmployeeRateService employeeRateService, EmployeeRateRepository employeeRateRepository) {
+    public CostService(CostRepository costRepository, EmployeeRateService employeeRateService) {
         this.costRepository = costRepository;
         this.employeeRateService = employeeRateService;
-        this.employeeRateRepository = employeeRateRepository;
     }
 
     @Transactional
@@ -48,6 +46,7 @@ public class CostService {
         cost.setEmployeeRate(employeeRate);
         cost.setQuantity(quantity);
         cost.setOccurrenceDate(DateTimeUtils.toInstant(date));
+        cost.setCreationDate(Instant.now());
         return cost;
     }
 
@@ -55,7 +54,10 @@ public class CostService {
         List<EmployeeRate> employeeRates = employeeRateService.getEmployeeRates(employee);
         List<Cost> costs = new ArrayList<>();
         for (EmployeeRate employeeRate : employeeRates) {
-            costs.addAll(costRepository.findAllByEmployeeRate(employeeRate));
+            costs.addAll(costRepository.findAllByEmployeeRate(employeeRate,
+                    Sort
+                            .by(Sort.Direction.DESC, "occurrenceDate")
+                            .and(Sort.by(Sort.Direction.DESC, "creationDate"))));
         }
         return costs;
     }
