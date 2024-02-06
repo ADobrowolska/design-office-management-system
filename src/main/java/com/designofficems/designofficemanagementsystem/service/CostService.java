@@ -51,14 +51,9 @@ public class CostService {
     }
 
     public List<Cost> getCosts(Employee employee) {
-        List<EmployeeRate> employeeRates = employeeRateService.getEmployeeRates(employee);
-        List<Cost> costs = new ArrayList<>();
-        for (EmployeeRate employeeRate : employeeRates) {
-            costs.addAll(costRepository.findAllByEmployeeRate(employeeRate,
+            return costRepository.saveAll(costRepository.findAllByEmployeeRateEmployee(employee,
                     Sort
                             .by(Sort.Direction.DESC, "occurrenceDate")
                             .and(Sort.by(Sort.Direction.DESC, "creationDate"))));
-        }
-        return costs;
     }
 }
