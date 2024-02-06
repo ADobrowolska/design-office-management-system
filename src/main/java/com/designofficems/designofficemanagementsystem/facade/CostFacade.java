@@ -32,4 +32,8 @@ public class CostFacade {
         Project project = projectService.findById(projectId);
         return costService.add(project, employee, date, quantity);
     }
+
+    public List<Cost> getCosts() {
+        return costService.getCosts(employeeService.getEmployee());
+    }
 }

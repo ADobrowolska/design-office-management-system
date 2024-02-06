@@ -6,6 +6,8 @@ import com.designofficems.designofficemanagementsystem.model.Employee;
 import com.designofficems.designofficemanagementsystem.model.EmployeeRate;
 import com.designofficems.designofficemanagementsystem.model.Project;
 import com.designofficems.designofficemanagementsystem.repository.CostRepository;
+import com.designofficems.designofficemanagementsystem.repository.EmployeeRateRepository;
+import com.designofficems.designofficemanagementsystem.util.CategoryType;
 import com.designofficems.designofficemanagementsystem.util.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,11 +22,13 @@ public class CostService {
 
     private final CostRepository costRepository;
     private final EmployeeRateService employeeRateService;
+    private final EmployeeRateRepository employeeRateRepository;
 
     @Autowired
-    public CostService(CostRepository costRepository, EmployeeRateService employeeRateService) {
+    public CostService(CostRepository costRepository, EmployeeRateService employeeRateService, EmployeeRateRepository employeeRateRepository) {
         this.costRepository = costRepository;
         this.employeeRateService = employeeRateService;
+        this.employeeRateRepository = employeeRateRepository;
     }
 
     @Transactional
@@ -47,5 +51,12 @@ public class CostService {
         return cost;
     }
 
-
+    public List<Cost> getCosts(Employee employee) {
+        List<EmployeeRate> employeeRates = employeeRateService.getEmployeeRates(employee);
+        List<Cost> costs = new ArrayList<>();
+        for (EmployeeRate employeeRate : employeeRates) {
+            costs.addAll(costRepository.findAllByEmployeeRate(employeeRate));
+        }
+        return costs;
+    }
 }

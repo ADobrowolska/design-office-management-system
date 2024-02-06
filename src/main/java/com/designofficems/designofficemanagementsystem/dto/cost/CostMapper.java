@@ -71,6 +71,9 @@ public class CostMapper {
     }
 
 
-
-
+    public static List<CostDTO> mapToCostDTOs(List<Cost> costs) {
+        return costs.stream()
+                .map(CostMapper::mapToCostDTO)
+                .collect(Collectors.toList());
+    }
 }
