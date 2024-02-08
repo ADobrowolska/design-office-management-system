@@ -51,9 +51,9 @@ public class CostService {
     }
 
     public List<Cost> getCosts(Employee employee) {
-            return costRepository.saveAll(costRepository.findAllByEmployeeRateEmployee(employee,
+        return costRepository.findAllByEmployeeRateEmployee(employee,
                     Sort
                             .by(Sort.Direction.DESC, "occurrenceDate")
-                            .and(Sort.by(Sort.Direction.DESC, "creationDate"))));
+                            .and(Sort.by(Sort.Direction.DESC, "creationDate")));
     }
 }
