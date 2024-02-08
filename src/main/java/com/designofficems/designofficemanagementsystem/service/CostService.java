@@ -56,4 +56,9 @@ public class CostService {
                             .by(Sort.Direction.DESC, "occurrenceDate")
                             .and(Sort.by(Sort.Direction.DESC, "creationDate")));
     }
+
+    public List<Cost> getCostsByDay(Employee employee, LocalDate date) {
+        return costRepository.findAllByEmployeeRateEmployeeAndOccurrenceDate(employee,
+                DateTimeUtils.toInstant(date));
+    }
 }

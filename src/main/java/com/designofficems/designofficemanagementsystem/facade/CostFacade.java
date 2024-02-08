@@ -36,4 +36,8 @@ public class CostFacade {
     public List<Cost> getCosts() {
         return costService.getCosts(employeeService.getEmployee());
     }
+
+    public List<Cost> getCostsByDay(LocalDate date) {
+        return costService.getCostsByDay(employeeService.getEmployee(), date);
+    }
 }
