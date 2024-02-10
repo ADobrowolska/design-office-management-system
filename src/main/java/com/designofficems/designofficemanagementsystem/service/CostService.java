@@ -7,6 +7,8 @@ import com.designofficems.designofficemanagementsystem.model.EmployeeRate;
 import com.designofficems.designofficemanagementsystem.model.Project;
 import com.designofficems.designofficemanagementsystem.repository.CostRepository;
 import com.designofficems.designofficemanagementsystem.util.DateTimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class CostService {
 
     private final CostRepository costRepository;
     private final EmployeeRateService employeeRateService;
+    private static final Logger log = LoggerFactory.getLogger(CostService.class);
 
     @Autowired
     public CostService(CostRepository costRepository, EmployeeRateService employeeRateService) {
@@ -65,5 +68,6 @@ public class CostService {
     @Transactional
     public void deleteCost(Integer id, Employee employee) {
         costRepository.deleteByIdAndEmployeeRateEmployee(id, employee);
+        log.info("Cost removed");
     }
 }
