@@ -16,4 +16,6 @@ public interface CostRepository extends JpaRepository<Cost, Integer> {
     List<Cost> findAllByEmployeeRateEmployee(Employee employee, Sort sort);
 
     List<Cost> findAllByEmployeeRateEmployeeAndOccurrenceDate(Employee employee, Instant date);
+
+    void deleteByIdAndEmployeeRateEmployee(Integer id, Employee employee);
 }

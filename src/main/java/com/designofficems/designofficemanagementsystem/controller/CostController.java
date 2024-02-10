@@ -6,6 +6,7 @@ import com.designofficems.designofficemanagementsystem.dto.cost.CostRequestDTO;
 import com.designofficems.designofficemanagementsystem.dto.cost.CostResponseDTO;
 import com.designofficems.designofficemanagementsystem.facade.CostFacade;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,9 +43,13 @@ public class CostController {
         List<CostDTO> costDTOs = CostMapper.mapToCostDTOs(costFacade.getCostsByDay(date));
         return ResponseEntity.ok(costDTOs);
     }
-//
-//    public ResponseEntity<Void> deleteCost(@PathVariable Integer id) {
-//
-//    }
+
+    @DeleteMapping("/costs/{id}")
+    public ResponseEntity deleteCost(@PathVariable Integer id) {
+        costFacade.deleteCost(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+
 
 }

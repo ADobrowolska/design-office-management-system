@@ -61,4 +61,9 @@ public class CostService {
         return costRepository.findAllByEmployeeRateEmployeeAndOccurrenceDate(employee,
                 DateTimeUtils.toInstant(date));
     }
+
+    @Transactional
+    public void deleteCost(Integer id, Employee employee) {
+        costRepository.deleteByIdAndEmployeeRateEmployee(id, employee);
+    }
 }
