@@ -19,8 +19,7 @@ public class DepartmentFacade {
 
     public DepartmentEmployeeDTO getDepartmentEmployee(Integer departmentId) {
         Department department = departmentService.findById(departmentId).orElseThrow();
-        DepartmentEmployeeDTO departmentEmployeeDTO = DepartmentMapper.mapToDepartmentEmployeeDTO(department, employeeService.getEmployeeByDepartment(department));
-        return departmentEmployeeDTO;
+        return DepartmentMapper.mapToDepartmentEmployeeDTO(department, employeeService.getEmployeeByDepartment(department));
     }
 
     public List<DepartmentEmployeeDTO> getDepartmentsWithEmployees() {
