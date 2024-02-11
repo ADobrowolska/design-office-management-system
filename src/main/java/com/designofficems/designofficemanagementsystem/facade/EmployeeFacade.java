@@ -18,9 +18,22 @@ public class EmployeeFacade {
         this.assignProjectService = assignProjectService;
     }
 
-
     public EmployeeProjectDTO getEmployeeWithProjects() {
         Employee employee = employeeService.getEmployee();
         return EmployeeMapper.mapToEmployeeProjectDTO(employee, assignProjectService.getProjectsByEmployee(employee));
     }
+
+    public Employee editEmployee(Employee employee) {
+        return employeeService.editEmployee(employee);
+    }
+
+    public Employee addEmployee(Employee employee) {
+        return employeeService.addEmployee(employee);
+    }
+
+    public Employee getEmployee() {
+        return employeeService.getEmployee();
+    }
+
+
 }

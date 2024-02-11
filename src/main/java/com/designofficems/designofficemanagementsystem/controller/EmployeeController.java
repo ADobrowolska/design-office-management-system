@@ -5,7 +5,6 @@ import com.designofficems.designofficemanagementsystem.dto.employee.EmployeeMapp
 import com.designofficems.designofficemanagementsystem.dto.employee.EmployeeProjectDTO;
 import com.designofficems.designofficemanagementsystem.facade.EmployeeFacade;
 import com.designofficems.designofficemanagementsystem.model.Employee;
-import com.designofficems.designofficemanagementsystem.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,25 +12,23 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class EmployeeController {
 
-    private final EmployeeService employeeService;
     private final EmployeeFacade employeeFacade;
 
     @Autowired
-    public EmployeeController(EmployeeService employeeService, EmployeeFacade employeeFacade) {
-        this.employeeService = employeeService;
+    public EmployeeController(EmployeeFacade employeeFacade) {
         this.employeeFacade = employeeFacade;
     }
 
     @PostMapping("/employees")
     public ResponseEntity<EmployeeDTO> addEmployee(@RequestBody EmployeeDTO employeeDTO) {
         Employee employee = EmployeeMapper.mapToEmployeeModel(employeeDTO);
-        EmployeeDTO receivedEmployeeDTO = EmployeeMapper.mapToEmployeeDTO(employeeService.addEmployee(employee));
+        EmployeeDTO receivedEmployeeDTO = EmployeeMapper.mapToEmployeeDTO(employeeFacade.addEmployee(employee));
         return ResponseEntity.ok(receivedEmployeeDTO);
     }
 
     @GetMapping("/employees")
     public ResponseEntity<EmployeeDTO> getEmployee() {
-        EmployeeDTO receivedEmployeeDTO = EmployeeMapper.mapToEmployeeDTO(employeeService.getEmployee());
+        EmployeeDTO receivedEmployeeDTO = EmployeeMapper.mapToEmployeeDTO(employeeFacade.getEmployee());
         return ResponseEntity.ok(receivedEmployeeDTO);
     }
 
@@ -43,7 +40,7 @@ public class EmployeeController {
     @PutMapping("/employee")
     public ResponseEntity<EmployeeDTO> editEmployee(@RequestBody EmployeeDTO employeeDTO) {
         Employee employee = EmployeeMapper.mapToEmployeeModel(employeeDTO);
-        EmployeeDTO receivedEmployeeDTO = EmployeeMapper.mapToEmployeeDTO(employeeService.editEmployee(employee));
+        EmployeeDTO receivedEmployeeDTO = EmployeeMapper.mapToEmployeeDTO(employeeFacade.editEmployee(employee));
         return ResponseEntity.ok(receivedEmployeeDTO);
     }
 
