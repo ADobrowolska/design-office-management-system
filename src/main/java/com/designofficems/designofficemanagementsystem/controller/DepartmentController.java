@@ -17,24 +17,22 @@ import java.util.List;
 @RestController
 public class DepartmentController {
 
-    private final DepartmentService departmentService;
     private final DepartmentFacade departmentFacade;
 
     @Autowired
-    public DepartmentController(DepartmentService departmentService, DepartmentFacade departmentFacade) {
-        this.departmentService = departmentService;
+    public DepartmentController(DepartmentFacade departmentFacade) {
         this.departmentFacade = departmentFacade;
     }
 
     @GetMapping("/departments")
     public ResponseEntity<List<DepartmentDTO>> getDepartments() {
-        List<DepartmentDTO> receivedDepartmentDTOs = DepartmentMapper.mapToDepartmentDTOs(departmentService.getDepartments());
+        List<DepartmentDTO> receivedDepartmentDTOs = DepartmentMapper.mapToDepartmentDTOs(departmentFacade.getDepartments());
         return ResponseEntity.ok(receivedDepartmentDTOs);
     }
 
     @GetMapping("/departments/param")
     public ResponseEntity<List<DepartmentDTO>> getDepartmentsByParam(@RequestParam(required = true) String searchBy) {
-        List<DepartmentDTO> receivedDepartmentDTOs = DepartmentMapper.mapToDepartmentDTOs(departmentService.getDepartmentsByParam(searchBy));
+        List<DepartmentDTO> receivedDepartmentDTOs = DepartmentMapper.mapToDepartmentDTOs(departmentFacade.getDepartmentsByParam(searchBy));
         return ResponseEntity.ok(receivedDepartmentDTOs);
     }
 

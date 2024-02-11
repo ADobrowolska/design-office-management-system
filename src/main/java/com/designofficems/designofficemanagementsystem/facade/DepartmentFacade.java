@@ -32,6 +32,15 @@ public class DepartmentFacade {
         return departmentEmployeeDTOs;
     }
 
+    public List<Department> getDepartments() {
+        return departmentService.getDepartments();
+    }
+
+    public List<Department> getDepartmentsByParam(String searchBy) {
+        return departmentService.getDepartmentsByParam(searchBy);
+    }
+
+
 
 
 }
