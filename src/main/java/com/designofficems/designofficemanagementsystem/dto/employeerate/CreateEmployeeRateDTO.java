@@ -11,5 +11,8 @@ public class CreateEmployeeRateDTO {
     private String name;
     private CategoryType category;
     private Integer employeeId;
+    private double rate;
+    private String currency;
+
 
 }

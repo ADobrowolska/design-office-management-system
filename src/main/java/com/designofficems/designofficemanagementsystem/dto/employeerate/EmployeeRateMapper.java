@@ -14,6 +14,7 @@ public class EmployeeRateMapper {
                 .category(employeeRate.getCategory())
                 .rate(employeeRate.getRate())
                 .employeeId(employeeRate.getEmployee().getId())
+                .currency(employeeRate.getCurrency())
                 .build();
     }
 
@@ -24,6 +25,7 @@ public class EmployeeRateMapper {
                 .category(employeeRateDTO.getCategory())
                 .rate(employeeRateDTO.getRate())
                 .employee(EmployeeRate.ofId(employeeRateDTO.getEmployeeId()))
+                .currency(employeeRateDTO.getCurrency())
                 .build();
     }
 
@@ -32,6 +34,8 @@ public class EmployeeRateMapper {
                 .name(employeeRateDTO.getName())
                 .category(employeeRateDTO.getCategory())
                 .employee(EmployeeRate.ofId(employeeRateDTO.getEmployeeId()))
+                .currency(employeeRateDTO.getCurrency())
+                .rate(employeeRateDTO.getRate())
                 .build();
     }
 

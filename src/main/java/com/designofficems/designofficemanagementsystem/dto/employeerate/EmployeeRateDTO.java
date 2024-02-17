@@ -13,5 +13,6 @@ public class EmployeeRateDTO {
     private CategoryType category;
     private double rate;
     private Integer employeeId;
+    private String currency;
 
 }

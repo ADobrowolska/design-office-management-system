@@ -26,6 +26,9 @@ public class EmployeeRate {
 
     private double rate;
 
+    @Column(nullable = false)
+    private String currency;
+
     @ManyToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;
