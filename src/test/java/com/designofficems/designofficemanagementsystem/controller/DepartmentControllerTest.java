@@ -1,10 +1,12 @@
 package com.designofficems.designofficemanagementsystem.controller;
 
 import com.designofficems.designofficemanagementsystem.dto.department.DepartmentDTO;
+import com.designofficems.designofficemanagementsystem.dto.department.DepartmentMapper;
 import com.designofficems.designofficemanagementsystem.model.Department;
 import com.designofficems.designofficemanagementsystem.repository.DepartmentRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class DepartmentControllerTest extends BaseTest {
@@ -58,8 +61,27 @@ class DepartmentControllerTest extends BaseTest {
                 new TypeReference<List<DepartmentDTO>>() {
                 });
         assertThat(departmentDTOs).isNotNull();
-
+        assertThat(departmentDTOs.size()).isEqualTo(2);
     }
+
+    @Test
+    void shouldGetDepartmentsByParam() throws Exception {
+        Department dept1 = createDepartment("Road");
+        Department dept2 = createDepartment("Bridge");
+        String param = "idg";
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/departments/param")
+                        .param("searchBy", param)
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        List<DepartmentDTO> departmentDTOs = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<DepartmentDTO>>() {
+        });
+        assertThat(departmentDTOs.get(0).getName()).isEqualTo(dept2.getName());
+        assertThat(departmentDTOs.size()).isEqualTo(1);
+        assertTrue(departmentDTOs.contains(DepartmentMapper.mapToDepartmentDTO(dept2)));
+    }
+
 
 
 
