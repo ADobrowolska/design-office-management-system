@@ -1,10 +1,7 @@
 package com.designofficems.designofficemanagementsystem.controller;
 
 import com.designofficems.designofficemanagementsystem.dto.assignproject.AssignProjectDTO;
-import com.designofficems.designofficemanagementsystem.dto.project.CreateProjectDTO;
-import com.designofficems.designofficemanagementsystem.dto.project.ProjectDTO;
-import com.designofficems.designofficemanagementsystem.dto.project.ProjectEmployeeDTO;
-import com.designofficems.designofficemanagementsystem.dto.project.ProjectMapper;
+import com.designofficems.designofficemanagementsystem.dto.project.*;
 import com.designofficems.designofficemanagementsystem.facade.ProjectFacade;
 import com.designofficems.designofficemanagementsystem.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.InstanceAlreadyExistsException;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -27,14 +25,17 @@ public class ProjectController {
     }
 
     @PostMapping("/projects")
-    public ResponseEntity<ProjectDTO> addProject(@RequestBody CreateProjectDTO projectDTO) throws InstanceAlreadyExistsException {
-        ProjectDTO receivedProjectDTO = ProjectMapper.mapToProjectDTO(projectService.addProject(ProjectMapper.mapToProjectModel(projectDTO)));
+    public ResponseEntity<ProjectDTO> addProject(@RequestBody CreateProjectDTO projectDTO)
+            throws InstanceAlreadyExistsException {
+        ProjectDTO receivedProjectDTO = ProjectMapper.mapToProjectDTO(
+                projectService.addProject(ProjectMapper.mapToProjectModel(projectDTO)));
         return ResponseEntity.ok(receivedProjectDTO);
     }
 
     @PutMapping("/projects")
     public ResponseEntity<ProjectDTO> editProject(@RequestBody ProjectDTO projectDTO) {
-        ProjectDTO receivedProjectDTO = ProjectMapper.mapToProjectDTO(projectService.editProject(ProjectMapper.mapToProjectModel(projectDTO)));
+        ProjectDTO receivedProjectDTO = ProjectMapper.mapToProjectDTO(
+                projectService.editProject(ProjectMapper.mapToProjectModel(projectDTO)));
         return ResponseEntity.ok(receivedProjectDTO);
     }
 
@@ -46,7 +47,8 @@ public class ProjectController {
 
     @GetMapping("/projects/param")
     public ResponseEntity<List<ProjectDTO>> getProjectByParam(@RequestParam(required = true) String searchBy) {
-        List<ProjectDTO> receivedProjectDTOs = ProjectMapper.mapToProjectDTOs(projectService.getProjectsByParam(searchBy));
+        List<ProjectDTO> receivedProjectDTOs = ProjectMapper.mapToProjectDTOs(
+                projectService.getProjectsByParam(searchBy));
         return ResponseEntity.ok(receivedProjectDTOs);
     }
 
@@ -60,9 +62,18 @@ public class ProjectController {
         return ResponseEntity.ok(projectFacade.getProjectsWithEmployees());
     }
 
+    @GetMapping("/projects/{id}/cost")
+    public ResponseEntity<ProjectCostDTO> getCostPerProject(@PathVariable int id,
+                                                            @RequestParam LocalDate startDate,
+                                                            @RequestParam LocalDate endDate) {
+        return ResponseEntity.ok(projectFacade.getCostPerProject(id, startDate, endDate));
+    }
+
     @PutMapping("/projects/assign")
-    public ResponseEntity<AssignProjectDTO> editProjectEmployee(@RequestBody ProjectEmployeeDTO projectDTO, @RequestParam(required = false) Integer employeeId) {
-        AssignProjectDTO receivedAssignProjectDTO = projectFacade.editProjectEmployee(ProjectMapper.mapToProjectModel(projectDTO), employeeId);
+    public ResponseEntity<AssignProjectDTO> editProjectEmployee(@RequestBody ProjectEmployeeDTO projectDTO,
+                                                                @RequestParam(required = false) Integer employeeId) {
+        AssignProjectDTO receivedAssignProjectDTO = projectFacade.editProjectEmployee(
+                ProjectMapper.mapToProjectModel(projectDTO), employeeId);
         return ResponseEntity.ok(receivedAssignProjectDTO);
     }
 

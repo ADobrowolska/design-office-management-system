@@ -1,10 +1,14 @@
 package com.designofficems.designofficemanagementsystem.dto.project;
 
+import com.designofficems.designofficemanagementsystem.dto.cost.DailyCostDTO;
 import com.designofficems.designofficemanagementsystem.dto.employee.EmployeeMapper;
 import com.designofficems.designofficemanagementsystem.model.Employee;
 import com.designofficems.designofficemanagementsystem.model.Project;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ProjectMapper {
@@ -63,6 +67,18 @@ public class ProjectMapper {
         return projects.stream()
                 .map(ProjectMapper::mapToProjectDTO)
                 .collect(Collectors.toList());
+    }
+
+    public static ProjectCostDTO mapToProjectCostDTO(Map<LocalDate, BigDecimal> totalByDate) {
+        BigDecimal total = totalByDate.values().stream()
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        List<DailyCostDTO> dailyCosts = totalByDate.entrySet().stream()
+                .map(entry -> new DailyCostDTO(entry.getValue(), entry.getKey()))
+                .toList();
+
+        return new ProjectCostDTO(total, dailyCosts);
     }
 
 

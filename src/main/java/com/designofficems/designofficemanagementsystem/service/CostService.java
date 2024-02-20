@@ -14,10 +14,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CostService {
@@ -55,9 +59,9 @@ public class CostService {
 
     public List<Cost> getCosts(Employee employee) {
         return costRepository.findAllByEmployeeRateEmployee(employee,
-                    Sort
-                            .by(Sort.Direction.DESC, "occurrenceDate")
-                            .and(Sort.by(Sort.Direction.DESC, "creationDate")));
+                Sort
+                        .by(Sort.Direction.DESC, "occurrenceDate")
+                        .and(Sort.by(Sort.Direction.DESC, "creationDate")));
     }
 
     public List<Cost> getCostsByDay(Employee employee, LocalDate date) {
@@ -69,5 +73,39 @@ public class CostService {
     public void deleteCost(Integer id, Employee employee) {
         costRepository.deleteByIdAndEmployeeRateEmployee(id, employee);
         log.info("Cost removed");
+    }
+
+    public Map<LocalDate, BigDecimal> getCostPerProject(int projectId, LocalDate startDate, LocalDate endDate) {
+        List<Cost> costs =
+                costRepository.findAllByProjectIdAndOccurrenceDateGreaterThanEqualAndOccurrenceDateLessThanEqual(
+                        projectId, DateTimeUtils.toInstant(startDate), DateTimeUtils.toInstant(endDate));
+        Map<LocalDate, BigDecimal> map = new HashMap<>();
+        for (Cost cost : costs) {
+            LocalDate day = DateTimeUtils.toLocalDate(cost.getOccurrenceDate());
+            if (map.containsKey(day)) {
+                BigDecimal current = map.get(day);
+                BigDecimal costValue = getSubtotal(cost);
+                BigDecimal aggregate = current.add(costValue);
+                map.put(day, aggregate);
+            } else {
+                map.put(day, getSubtotal(cost));
+            }
+        }
+        return map;
+    }
+
+    public static BigDecimal getTotal(List<Cost> costs) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (Cost cost : costs) {
+            total = total.add(getSubtotal(cost));
+        }
+        return total;
+    }
+
+    public static BigDecimal getSubtotal(Cost cost) {
+        BigDecimal rateByMinute = BigDecimal.valueOf(cost.getEmployeeRate().getRate())
+                .divide(BigDecimal.valueOf(60), RoundingMode.HALF_EVEN);
+        BigDecimal subtotal = rateByMinute.multiply(BigDecimal.valueOf(cost.getQuantity()));
+        return subtotal;
     }
 }

@@ -7,13 +7,14 @@ import com.designofficems.designofficemanagementsystem.model.Cost;
 import com.designofficems.designofficemanagementsystem.model.Project;
 import com.designofficems.designofficemanagementsystem.util.DateTimeUtils;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.designofficems.designofficemanagementsystem.service.CostService.getSubtotal;
+import static com.designofficems.designofficemanagementsystem.service.CostService.getTotal;
 
 public class CostMapper {
 
@@ -53,22 +54,6 @@ public class CostMapper {
                 .entries(costs.stream().map(CostMapper::mapToCostDTO).collect(Collectors.toList()))
                 .build();
     }
-
-    private static BigDecimal getTotal(List<Cost> costs) {
-        BigDecimal total = BigDecimal.ZERO;
-        for (Cost cost : costs) {
-            total = total.add(getSubtotal(cost));
-        }
-        return total;
-    }
-
-    private static BigDecimal getSubtotal(Cost cost) {
-        BigDecimal rateByMinute = BigDecimal.valueOf(cost.getEmployeeRate().getRate())
-                .divide(BigDecimal.valueOf(60), RoundingMode.HALF_EVEN);
-        BigDecimal subtotal = rateByMinute.multiply(BigDecimal.valueOf(cost.getQuantity()));
-        return subtotal;
-    }
-
 
     public static List<CostDTO> mapToCostDTOs(List<Cost> costs) {
         return costs.stream()

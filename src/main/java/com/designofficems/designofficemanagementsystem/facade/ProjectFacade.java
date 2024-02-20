@@ -2,18 +2,23 @@ package com.designofficems.designofficemanagementsystem.facade;
 
 import com.designofficems.designofficemanagementsystem.dto.assignproject.AssignProjectDTO;
 import com.designofficems.designofficemanagementsystem.dto.assignproject.AssignProjectMapper;
+import com.designofficems.designofficemanagementsystem.dto.project.ProjectCostDTO;
 import com.designofficems.designofficemanagementsystem.dto.project.ProjectEmployeeDTO;
 import com.designofficems.designofficemanagementsystem.dto.project.ProjectMapper;
 import com.designofficems.designofficemanagementsystem.model.Employee;
 import com.designofficems.designofficemanagementsystem.model.Project;
 import com.designofficems.designofficemanagementsystem.service.AssignProjectService;
+import com.designofficems.designofficemanagementsystem.service.CostService;
 import com.designofficems.designofficemanagementsystem.service.EmployeeService;
 import com.designofficems.designofficemanagementsystem.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Component
@@ -22,12 +27,14 @@ public class ProjectFacade {
     private final ProjectService projectService;
     private final AssignProjectService assignProjectService;
     private final EmployeeService employeeService;
+    private final CostService costService;
 
     @Autowired
-    public ProjectFacade(ProjectService projectService, AssignProjectService assignProjectService, EmployeeService employeeService) {
+    public ProjectFacade(ProjectService projectService, AssignProjectService assignProjectService, EmployeeService employeeService, CostService costService) {
         this.projectService = projectService;
         this.assignProjectService = assignProjectService;
         this.employeeService = employeeService;
+        this.costService = costService;
     }
 
     public ProjectEmployeeDTO getProjectWithEmployees(Integer projectId) {
@@ -56,4 +63,11 @@ public class ProjectFacade {
             throw new NoSuchElementException("Project does not exist");
         }
     }
+
+    public ProjectCostDTO getCostPerProject(int projectId, LocalDate startDate, LocalDate endDate) {
+        Map<LocalDate, BigDecimal> totalByDate = costService.getCostPerProject(projectId, startDate, endDate);
+        return ProjectMapper.mapToProjectCostDTO(totalByDate);
+    }
+
+
 }
