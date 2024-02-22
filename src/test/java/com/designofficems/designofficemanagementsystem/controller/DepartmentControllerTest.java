@@ -89,7 +89,8 @@ class DepartmentControllerTest extends BaseTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().is(200))
                 .andReturn();
-        List<DepartmentDTO> departmentDTOs = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<DepartmentDTO>>() {
+        List<DepartmentDTO> departmentDTOs = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                new TypeReference<List<DepartmentDTO>>() {
         });
         assertThat(departmentDTOs.get(0).getName()).isEqualTo(dept2.getName());
         assertThat(departmentDTOs.size()).isEqualTo(1);
@@ -111,6 +112,23 @@ class DepartmentControllerTest extends BaseTest {
         assertThat(receivedDept.getName()).isEqualTo("Road");
     }
 
+    @Test
+    void shouldGetDepartmentsWithEmployees() throws Exception {
+        Department dept1 = createDepartment("Road");
+        Department dept2 = createDepartment("Geodesy");
+        Employee employee = createEmployee("Anna", "Nowak", dept1);
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/departments/employees")
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        List<DepartmentEmployeeDTO> receivedDepartments = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                new TypeReference<List<DepartmentEmployeeDTO>>() {
+                });
+        assertThat(receivedDepartments.size()).isEqualTo(2);
+        assertThat(receivedDepartments.get(0).getEmployees()).isNotNull();
+        assertThat(receivedDepartments.get(1).getEmployees().size()).isEqualTo(0);
+    }
 
 
 
