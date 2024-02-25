@@ -16,8 +16,8 @@ public class EmployeeRateController {
     private final EmployeeRateFacade employeeRateFacade;
 
     @Autowired
-    public EmployeeRateController(EmployeeRateFacade employeeRateFacede) {
-        this.employeeRateFacade = employeeRateFacede;
+    public EmployeeRateController(EmployeeRateFacade employeeRateFacade) {
+        this.employeeRateFacade = employeeRateFacade;
     }
 
     @GetMapping("/employee/rate")
