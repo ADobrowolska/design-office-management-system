@@ -95,6 +95,28 @@ class EmployeeRateControllerTest extends BaseTest {
 
         assertThat(employeeRateDTOs.size()).isEqualTo(1);
         assertThat(employeeRateDTOs.get(0)).isEqualTo(EmployeeRateMapper.mapToEmployeeRateDTO(employeeRate));
+    }
+
+    @Test
+    void shouldGetEmployeeRateEmployeeId() throws Exception {
+        Employee employee = createEmployee();
+        EmployeeRate employeeRate1 = createEmployeeRate("AnnaNowak_SALARY",
+                CategoryType.SALARY, 100, "PLN", employee);
+        EmployeeRate employeeRate2 = createEmployeeRate("AnnaNowak_LICENCE",
+                CategoryType.LICENCE, 5, "PLN", employee);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/employee/{id}/rate", employee.getId())
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        List<EmployeeRateDTO> employeeRateDTOs = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<EmployeeRateDTO>>() {
+        });
+
+        assertThat(employeeRateDTOs.size()).isEqualTo(2);
+        assertThat(employeeRateDTOs.get(0).getName()).isEqualTo("AnnaNowak_SALARY");
+        assertThat(employeeRateDTOs.get(1).getName()).isEqualTo("AnnaNowak_LICENCE");
+
 
     }
 
