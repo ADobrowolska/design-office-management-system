@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
+import java.util.Random;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -116,8 +117,20 @@ class EmployeeRateControllerTest extends BaseTest {
         assertThat(employeeRateDTOs.size()).isEqualTo(2);
         assertThat(employeeRateDTOs.get(0).getName()).isEqualTo("AnnaNowak_SALARY");
         assertThat(employeeRateDTOs.get(1).getName()).isEqualTo("AnnaNowak_LICENCE");
+    }
 
-
+    @Test
+    void shouldGetEmployeeRateEmployeeId_AccessDeniedEx() throws Exception {
+        Random random = new Random();
+        int randomId = random.nextInt(1000) + 1;
+        Employee employee = createEmployee();
+        EmployeeRate employeeRate1 = createEmployeeRate("AnnaNowak_SALARY",
+                CategoryType.SALARY, 100, "PLN", employee);
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/employee/{id}/rate", randomId)
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(403))
+                .andReturn();
     }
 
 
