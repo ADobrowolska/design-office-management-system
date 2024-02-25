@@ -39,8 +39,6 @@ class DepartmentControllerTest extends BaseTest {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    private Department department;
-
     @BeforeEach
     protected void setUp() throws Exception {
         super.setUp();
@@ -129,10 +127,6 @@ class DepartmentControllerTest extends BaseTest {
         assertThat(receivedDepartments.get(0).getEmployees()).isNotNull();
         assertThat(receivedDepartments.get(1).getEmployees().size()).isEqualTo(0);
     }
-
-
-
-
 
 
 }
