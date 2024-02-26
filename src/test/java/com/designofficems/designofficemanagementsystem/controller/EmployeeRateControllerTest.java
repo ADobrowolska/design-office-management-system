@@ -1,5 +1,6 @@
 package com.designofficems.designofficemanagementsystem.controller;
 
+import com.designofficems.designofficemanagementsystem.dto.employeerate.CreateEmployeeRateDTO;
 import com.designofficems.designofficemanagementsystem.dto.employeerate.EmployeeRateDTO;
 import com.designofficems.designofficemanagementsystem.dto.employeerate.EmployeeRateMapper;
 import com.designofficems.designofficemanagementsystem.model.Department;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -133,7 +135,73 @@ class EmployeeRateControllerTest extends BaseTest {
                 .andReturn();
     }
 
+    @Test
+    void shouldAddEmployeeRate_CurrencyUSD() throws Exception {
+        Employee employee = createEmployee();
+        CreateEmployeeRateDTO employeeRate = CreateEmployeeRateDTO.builder()
+                .name("AnnaNowak_LICENCE")
+                .category(CategoryType.LICENCE)
+                .employeeId(employee.getId())
+                .rate(5)
+                .currency("USD")
+                .build();
+        MvcResult postMvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/employee/rate")
+                        .headers(getAuthorizedHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeRate))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        EmployeeRateDTO receivedEmployeeRate = objectMapper.readValue(postMvcResult.getResponse().getContentAsString(),
+                EmployeeRateDTO.class);
 
+        MvcResult getMvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/employee/{id}/rate", employee.getId())
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        EmployeeRateDTO fetchedEmployeeRate = objectMapper.readValue(getMvcResult.getResponse().getContentAsString(),
+                new TypeReference<List<EmployeeRateDTO>>() {
+                }).stream().findFirst().orElseThrow();
+
+        assertThat(receivedEmployeeRate.getName()).isEqualTo(fetchedEmployeeRate.getName());
+        assertThat(receivedEmployeeRate.getId()).isEqualTo(fetchedEmployeeRate.getId());
+    }
+
+    @Test
+    void shouldAddEmployeeRate_CurrencyPLN() throws Exception {
+        Employee employee = createEmployee();
+        CreateEmployeeRateDTO employeeRate = CreateEmployeeRateDTO.builder()
+                .name("AnnaNowak_LICENCE")
+                .category(CategoryType.LICENCE)
+                .employeeId(employee.getId())
+                .rate(5)
+                .currency("PLN")
+                .build();
+        MvcResult postMvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/employee/rate")
+                        .headers(getAuthorizedHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeRate))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        EmployeeRateDTO receivedEmployeeRate = objectMapper.readValue(postMvcResult.getResponse().getContentAsString(),
+                EmployeeRateDTO.class);
+
+        MvcResult getMvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/employee/{id}/rate", employee.getId())
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        EmployeeRateDTO fetchedEmployeeRate = objectMapper.readValue(getMvcResult.getResponse().getContentAsString(),
+                new TypeReference<List<EmployeeRateDTO>>() {
+                }).stream().findFirst().orElseThrow();
+
+        assertThat(receivedEmployeeRate.getName()).isEqualTo(fetchedEmployeeRate.getName());
+        assertThat(receivedEmployeeRate.getId()).isEqualTo(fetchedEmployeeRate.getId());
+    }
 
 
 
