@@ -23,10 +23,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.util.List;
 import java.util.Random;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @SpringBootTest
@@ -203,6 +206,28 @@ class EmployeeRateControllerTest extends BaseTest {
         assertThat(receivedEmployeeRate.getId()).isEqualTo(fetchedEmployeeRate.getId());
     }
 
+    @Test
+    void shouldAddEmployeeRate_whenInstanceAlreadyExists() throws Exception {
+        Employee employee = createEmployee();
+        EmployeeRate employeeRate1 = createEmployeeRate(
+                "AnnaNowak_SALARY", CategoryType.SALARY, 20, "USD", employee);
+        CreateEmployeeRateDTO employeeRate = CreateEmployeeRateDTO.builder()
+                .name("AnnaNowak_SALARY")
+                .category(CategoryType.SALARY)
+                .employeeId(employee.getId())
+                .rate(20)
+                .currency("USD")
+                .build();
+        mockMvc.perform(MockMvcRequestBuilders.post("/employee/rate")
+                        .headers(getAuthorizedHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeRate))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(409))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof InstanceAlreadyExistsException))
+                .andExpect(result -> assertEquals("Employee rate exists", result.getResolvedException().getMessage()));
+    }
 
 
 }
