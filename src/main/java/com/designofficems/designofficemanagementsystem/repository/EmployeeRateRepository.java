@@ -12,4 +12,6 @@ public interface EmployeeRateRepository extends JpaRepository<EmployeeRate, Inte
     List<EmployeeRate> findAllByEmployee(Employee employee);
 
     EmployeeRate findByEmployeeAndCategory(Employee employee, CategoryType categoryType);
+
+    boolean existsByEmployeeAndCategory(Employee employee, CategoryType category);
 }

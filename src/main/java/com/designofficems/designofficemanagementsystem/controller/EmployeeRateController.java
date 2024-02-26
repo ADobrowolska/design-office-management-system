@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.util.List;
 
 @RestController
@@ -31,7 +32,8 @@ public class EmployeeRateController {
     }
 
     @PostMapping("/employee/rate")
-    public ResponseEntity<EmployeeRateDTO> addEmployeeRate(@RequestBody CreateEmployeeRateDTO employeeRateDTO) {
+    public ResponseEntity<EmployeeRateDTO> addEmployeeRate(@RequestBody CreateEmployeeRateDTO employeeRateDTO)
+            throws InstanceAlreadyExistsException {
         return ResponseEntity.ok(EmployeeRateMapper.mapToEmployeeRateDTO(
                 employeeRateFacade.addEmployeeRate(EmployeeRateMapper.mapToEmployeeRateModel(employeeRateDTO))));
     }

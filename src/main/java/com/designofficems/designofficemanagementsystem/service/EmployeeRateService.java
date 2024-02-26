@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
@@ -26,14 +27,18 @@ public class EmployeeRateService {
         this.currencyService = currencyService;
     }
 
-    public EmployeeRate addEmployeeRate(EmployeeRate employeeRate) {
-        if (DEFAULT_CURRENCY.equals(employeeRate.getCurrency().toUpperCase())) {
-            employeeRate.setRate(employeeRate.getRate());
+    public EmployeeRate addEmployeeRate(EmployeeRate employeeRate) throws InstanceAlreadyExistsException {
+        if (!employeeRateRepository.existsByEmployeeAndCategory(employeeRate.getEmployee(), employeeRate.getCategory())) {
+            if (DEFAULT_CURRENCY.equals(employeeRate.getCurrency().toUpperCase())) {
+                employeeRate.setRate(employeeRate.getRate());
+            } else {
+                employeeRate.setRate(convertRate(employeeRate.getRate(), employeeRate.getCurrency()));
+                employeeRate.setCurrency(DEFAULT_CURRENCY);
+            }
+            return employeeRateRepository.save(employeeRate);
         } else {
-            employeeRate.setRate(convertRate(employeeRate.getRate(), employeeRate.getCurrency()));
-            employeeRate.setCurrency(DEFAULT_CURRENCY);
+            throw new InstanceAlreadyExistsException("Employee rate exists");
         }
-        return employeeRateRepository.save(employeeRate);
     }
 
     public List<EmployeeRate> getEmployeeRates(Employee employee) {

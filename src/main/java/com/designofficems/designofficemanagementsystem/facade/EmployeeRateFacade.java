@@ -7,6 +7,7 @@ import com.designofficems.designofficemanagementsystem.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.util.List;
 
 @Component
@@ -32,7 +33,7 @@ public class EmployeeRateFacade {
         return employeeRates;
     }
 
-    public EmployeeRate addEmployeeRate(EmployeeRate employeeRate) {
+    public EmployeeRate addEmployeeRate(EmployeeRate employeeRate) throws InstanceAlreadyExistsException {
         return employeeRateService.addEmployeeRate(employeeRate);
     }
 
