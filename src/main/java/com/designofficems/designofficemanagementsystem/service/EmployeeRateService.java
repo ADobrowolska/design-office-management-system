@@ -54,6 +54,7 @@ public class EmployeeRateService {
         EmployeeRate existed = getEmployeeRate(employeeRate.getEmployee(), employeeRate.getCategory());
         existed.setName(employeeRate.getName());
         existed.setRate(employeeRate.getRate());
+        existed.setCurrency(employeeRate.getCurrency());
         return employeeRateRepository.save(existed);
     }
 
