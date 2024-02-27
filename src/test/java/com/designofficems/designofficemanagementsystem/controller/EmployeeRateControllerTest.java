@@ -229,5 +229,41 @@ class EmployeeRateControllerTest extends BaseTest {
                 .andExpect(result -> assertEquals("Employee rate exists", result.getResolvedException().getMessage()));
     }
 
+    @Test
+    void shouldEditEmployeeRate() throws Exception {
+        Employee employee = createEmployee();
+        EmployeeRate employeeRateToEdit = createEmployeeRate(
+                "AnnaNowak_LICENCE", CategoryType.SALARY, 10, "USD", employee);
+        EmployeeRateDTO employeeRate = EmployeeRateDTO.builder()
+                .name("AnnaNowak_LICENCEEE")
+                .category(CategoryType.SALARY)
+                .rate(20)
+                .currency("PLN")
+                .employeeId(employee.getId())
+                .build();
+        MvcResult putMvcResult = mockMvc.perform(MockMvcRequestBuilders.put("/employee/rate")
+                        .headers(getAuthorizedHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeRate))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        EmployeeRateDTO receivedEmployeeRate = objectMapper.readValue(putMvcResult.getResponse().getContentAsString(),
+                EmployeeRateDTO.class);
+
+        MvcResult getMvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/employee/{id}/rate", employee.getId())
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        EmployeeRateDTO fetchedEmployeeRate = objectMapper.readValue(getMvcResult.getResponse().getContentAsString(),
+                new TypeReference<List<EmployeeRateDTO>>() {
+                }).stream().findFirst().orElseThrow();
+
+        assertThat(fetchedEmployeeRate.getName()).isEqualTo(receivedEmployeeRate.getName());
+        assertThat(fetchedEmployeeRate.getRate()).isEqualTo(receivedEmployeeRate.getRate());
+    }
+
 
 }
