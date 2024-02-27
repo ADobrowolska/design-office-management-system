@@ -38,7 +38,7 @@ public class EmployeeRateController {
                 employeeRateFacade.addEmployeeRate(EmployeeRateMapper.mapToEmployeeRateModel(employeeRateDTO))));
     }
 
-    @PutMapping("employee/rate")
+    @PutMapping("/employee/rate")
     public ResponseEntity<EmployeeRateDTO> editEmployeeRate(@RequestBody EmployeeRateDTO employeeRateDTO) {
         return ResponseEntity.ok(EmployeeRateMapper.mapToEmployeeRateDTO(
                 employeeRateFacade.editEmployeeRate(EmployeeRateMapper.mapToEmployeeRateModel(employeeRateDTO))));
