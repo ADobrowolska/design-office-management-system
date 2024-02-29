@@ -29,6 +29,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -99,7 +100,8 @@ class ProjectControllerTest extends BaseTest {
                 .andExpect(MockMvcResultMatchers.status().is(200))
                 .andReturn();
         List<ProjectDTO> receivedProjectDTOs = objectMapper.readValue(getMvcResult.getResponse().getContentAsString(),
-                new TypeReference<List<ProjectDTO>>() {});
+                new TypeReference<List<ProjectDTO>>() {
+                });
 
         assertThat(receivedProjectDTOs.size()).isEqualTo(2);
         assertThat(receivedProjectDTOs.get(0)).isEqualTo(ProjectMapper.mapToProjectDTO(project1));
@@ -248,7 +250,26 @@ class ProjectControllerTest extends BaseTest {
                 .get(0).getId());
     }
 
+    @Test
+    void shouldEditProjectEmployee_Project_NoSuchElementEx() throws Exception {
+        Department dept = createDepartment();
+        Employee employee = createEmployee("Jan", "Kowalski", dept);
+        List<Employee> employees = new ArrayList<>();
+        ProjectEmployeeDTO projectEmployeeDTO = ProjectEmployeeDTO.builder()
+                .id(1)
+                .build();
 
+        mockMvc.perform(MockMvcRequestBuilders.put("/projects/assign")
+                        .headers(getAuthorizedHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(projectEmployeeDTO))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("employeeId", "" + employee.getId()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(404))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoSuchElementException))
+                .andExpect(result -> assertEquals("Project does not exist", result.getResolvedException().getMessage()));
+    }
 
 
 }
