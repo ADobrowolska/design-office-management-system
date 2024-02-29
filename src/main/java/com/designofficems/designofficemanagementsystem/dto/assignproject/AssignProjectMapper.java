@@ -8,8 +8,8 @@ public class AssignProjectMapper {
     public static AssignProjectDTO mapToAssignProjectDTO(AssignProject assignProject) {
         return AssignProjectDTO.builder()
                 .id(assignProject.getId())
-                .projectId(assignProject.getId())
-                .employeeId(assignProject.getId())
+                .projectId(assignProject.getProject().getId())
+                .employeeId(assignProject.getEmployee().getId())
                 .build();
     }
 
