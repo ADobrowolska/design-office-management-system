@@ -1,5 +1,6 @@
 package com.designofficems.designofficemanagementsystem.controller;
 
+import com.designofficems.designofficemanagementsystem.dto.project.CreateProjectDTO;
 import com.designofficems.designofficemanagementsystem.dto.project.ProjectDTO;
 import com.designofficems.designofficemanagementsystem.dto.project.ProjectMapper;
 import com.designofficems.designofficemanagementsystem.model.Department;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -97,6 +99,38 @@ class ProjectControllerTest extends BaseTest {
 
         assertThat(receivedProjectDTOs.size()).isEqualTo(2);
         assertThat(receivedProjectDTOs.get(0)).isEqualTo(ProjectMapper.mapToProjectDTO(project1));
+    }
+
+    @Test
+    void shouldAddProject() throws Exception {
+        CreateProjectDTO project = CreateProjectDTO.builder()
+                .name("DK8")
+                .budget(BigDecimal.valueOf(1500000))
+                .build();
+        String searchByParam = "K8";
+        MvcResult postMvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/projects")
+                        .headers(getAuthorizedHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(project))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        ProjectDTO receivedProjectDTO = objectMapper.readValue(postMvcResult.getResponse().getContentAsString(),
+                ProjectDTO.class);
+        MvcResult getMvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/projects/param")
+                        .headers(getAuthorizedHeader())
+                        .param("searchBy", searchByParam))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        List<ProjectDTO> fetchedProjectDTOs = objectMapper.readValue(getMvcResult.getResponse().getContentAsString(),
+                new TypeReference<List<ProjectDTO>>() {
+                });
+        ProjectDTO projectDTO = fetchedProjectDTOs.stream().findFirst().orElseThrow();
+
+        assertThat(projectDTO.getName()).isEqualTo(project.getName());
+        assertThat(projectDTO.getBudget()).isEqualTo(project.getBudget());
     }
 
 
