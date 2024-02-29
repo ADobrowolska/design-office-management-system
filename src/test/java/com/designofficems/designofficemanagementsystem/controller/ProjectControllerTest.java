@@ -1,5 +1,6 @@
 package com.designofficems.designofficemanagementsystem.controller;
 
+import com.designofficems.designofficemanagementsystem.dto.assignproject.AssignProjectDTO;
 import com.designofficems.designofficemanagementsystem.dto.employee.EmployeeMapper;
 import com.designofficems.designofficemanagementsystem.dto.project.CreateProjectDTO;
 import com.designofficems.designofficemanagementsystem.dto.project.ProjectDTO;
@@ -14,7 +15,6 @@ import com.designofficems.designofficemanagementsystem.repository.ProjectReposit
 import com.designofficems.designofficemanagementsystem.service.AssignProjectService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +27,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class ProjectControllerTest extends BaseTest {
@@ -188,6 +190,62 @@ class ProjectControllerTest extends BaseTest {
         assertThat(projectEmployeeDTO.getEmployees().size()).isEqualTo(1);
         assertThat(projectEmployeeDTO.getEmployees().get(0)).isEqualTo(EmployeeMapper.mapToEmployeeDTO(employee));
         assertThat(projectEmployeeDTO.getName()).isEqualTo(project.getName());
+    }
+
+    @Test
+    void shouldGetProjectsWithEmployees() throws Exception {
+        Department dept = createDepartment();
+        Employee employee = createEmployee("Jan", "Kowalski", dept);
+        Project project1 = createProject("DK91R", BigDecimal.valueOf(4500000), "koncepcja");
+        Project project2 = createProject("DK8B", BigDecimal.valueOf(2300000), "projekt");
+        assignProjectService.assignEmployeeToProject(project1, employee);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/projects/employees")
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        List<ProjectEmployeeDTO> projectEmployeeDTOs = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                new TypeReference<List<ProjectEmployeeDTO>>() {
+                });
+
+        assertThat(projectEmployeeDTOs.get(0).getEmployees().size()).isEqualTo(1);
+        assertThat(projectEmployeeDTOs.get(1).getEmployees().size()).isEqualTo(0);
+        assertTrue(projectEmployeeDTOs.contains(ProjectMapper.mapToProjectEmployeeDTO(project2, new ArrayList<>())));
+        assertEquals(2, projectEmployeeDTOs.size());
+    }
+
+    @Test
+    void shouldEditProjectEmployee() throws Exception {
+        Department dept = createDepartment();
+        Employee employee = createEmployee("Jan", "Kowalski", dept);
+        Project project = createProject("S19PH", BigDecimal.valueOf(5500000), "proj");
+        List<Employee> employees = new ArrayList<>();
+        ProjectEmployeeDTO projectEmployeeDTO = ProjectMapper.mapToProjectEmployeeDTO(project, employees);
+
+        MvcResult putMvcResult = mockMvc.perform(MockMvcRequestBuilders.put("/projects/assign")
+                        .headers(getAuthorizedHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(projectEmployeeDTO))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("employeeId", "" + employee.getId()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        AssignProjectDTO assignProjectDTO = objectMapper.readValue(putMvcResult.getResponse().getContentAsString(),
+                AssignProjectDTO.class);
+
+        MvcResult getMvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/projects/{id}/employees", project.getId())
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        ProjectEmployeeDTO receivedProjectEmployeeDTO = objectMapper.readValue(getMvcResult.getResponse().getContentAsString(),
+                ProjectEmployeeDTO.class);
+
+        assertThat(assignProjectDTO.getProjectId()).isEqualTo(receivedProjectEmployeeDTO.getId());
+        assertThat(assignProjectDTO.getEmployeeId()).isEqualTo(receivedProjectEmployeeDTO.getEmployees()
+                .get(0).getId());
     }
 
 
