@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 public class ControllerAdvice {
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<String> handleNoSuchElementException(NoSuchMethodException exception) {
+    public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(exception.getMessage());
     }
