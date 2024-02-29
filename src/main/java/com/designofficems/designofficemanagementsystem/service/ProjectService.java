@@ -51,7 +51,7 @@ public class ProjectService {
 
 
     public boolean checkIfProjectExists(Project project) {
-        return projectRepository.existsByName(project.getName());
+        return projectRepository.existsById(project.getId());
     }
 
 
