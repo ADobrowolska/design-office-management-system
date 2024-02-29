@@ -1,7 +1,9 @@
 package com.designofficems.designofficemanagementsystem.controller;
 
+import com.designofficems.designofficemanagementsystem.dto.employee.EmployeeMapper;
 import com.designofficems.designofficemanagementsystem.dto.project.CreateProjectDTO;
 import com.designofficems.designofficemanagementsystem.dto.project.ProjectDTO;
+import com.designofficems.designofficemanagementsystem.dto.project.ProjectEmployeeDTO;
 import com.designofficems.designofficemanagementsystem.dto.project.ProjectMapper;
 import com.designofficems.designofficemanagementsystem.model.Department;
 import com.designofficems.designofficemanagementsystem.model.Employee;
@@ -131,6 +133,8 @@ class ProjectControllerTest extends BaseTest {
 
         assertThat(projectDTO.getName()).isEqualTo(project.getName());
         assertThat(projectDTO.getBudget()).isEqualTo(project.getBudget());
+        assertThat(receivedProjectDTO.getBudget()).isEqualTo(projectDTO.getBudget());
+        assertThat(receivedProjectDTO.getName()).isEqualTo(projectDTO.getName());
     }
 
     @Test
@@ -163,6 +167,27 @@ class ProjectControllerTest extends BaseTest {
 
         assertThat(fetchedProjectDTO.getBudget()).isEqualTo(receivedProjectDTO.getBudget());
         assertThat(fetchedProjectDTO.getBudget()).isEqualTo(editedProject.getBudget());
+    }
+
+    @Test
+    void shouldGetProjectWithEmployees() throws Exception {
+        Department department = createDepartment();
+        Employee employee = createEmployee("Jan", "Kowalski", department);
+        Project project = createProject("DK8", BigDecimal.valueOf(560000), "projekt");
+        assignProjectService.assignEmployeeToProject(project, employee);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/projects/{id}/employees", project.getId())
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        ProjectEmployeeDTO projectEmployeeDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                ProjectEmployeeDTO.class);
+
+        assertThat(projectEmployeeDTO.getEmployees()).isNotEmpty();
+        assertThat(projectEmployeeDTO.getEmployees().size()).isEqualTo(1);
+        assertThat(projectEmployeeDTO.getEmployees().get(0)).isEqualTo(EmployeeMapper.mapToEmployeeDTO(employee));
+        assertThat(projectEmployeeDTO.getName()).isEqualTo(project.getName());
     }
 
 
