@@ -133,6 +133,37 @@ class ProjectControllerTest extends BaseTest {
         assertThat(projectDTO.getBudget()).isEqualTo(project.getBudget());
     }
 
+    @Test
+    void shouldEditProject() throws Exception {
+        Project project = createProject("S19DB", BigDecimal.valueOf(6500000), "Dobrzyniewo-Bialystok");
+        ProjectDTO editedProject = ProjectMapper.mapToProjectDTO(project);
+        editedProject.setBudget(BigDecimal.valueOf(5500000));
+        String searchByParam = "DB";
+        MvcResult putMvcResult = mockMvc.perform(MockMvcRequestBuilders.put("/projects")
+                        .headers(getAuthorizedHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(editedProject))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        ProjectDTO receivedProjectDTO = objectMapper.readValue(putMvcResult.getResponse().getContentAsString(),
+                ProjectDTO.class);
+
+        MvcResult getMvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/projects/param")
+                        .headers(getAuthorizedHeader())
+                        .param("searchBy", searchByParam))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        List<ProjectDTO> fetchedProjectDTOs = objectMapper.readValue(getMvcResult.getResponse().getContentAsString(),
+                new TypeReference<List<ProjectDTO>>() {
+                });
+        ProjectDTO fetchedProjectDTO = fetchedProjectDTOs.stream().findFirst().orElseThrow();
+
+        assertThat(fetchedProjectDTO.getBudget()).isEqualTo(receivedProjectDTO.getBudget());
+        assertThat(fetchedProjectDTO.getBudget()).isEqualTo(editedProject.getBudget());
+    }
 
 
 
