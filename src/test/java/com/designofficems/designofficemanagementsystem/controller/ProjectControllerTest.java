@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -270,6 +271,28 @@ class ProjectControllerTest extends BaseTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoSuchElementException))
                 .andExpect(result -> assertEquals("Project does not exist", result.getResolvedException().getMessage()));
     }
+
+    @Test
+    void shouldEditProjectEmployee_Employee_NoSuchElementEx() throws Exception {
+        Random random = new Random();
+        int randomId = random.nextInt(100000) + 1;
+        Project project = createProject("S19PH", BigDecimal.valueOf(5500000), "proj");
+        List<Employee> employees = new ArrayList<>();
+        ProjectEmployeeDTO projectEmployeeDTO = ProjectMapper.mapToProjectEmployeeDTO(project, employees);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/projects/assign")
+                        .headers(getAuthorizedHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(projectEmployeeDTO))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("employeeId", "" + randomId))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(404))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NoSuchElementException))
+                .andExpect(result -> assertEquals("This employee does not exist", result.getResolvedException().getMessage()));
+    }
+
+
 
 
 }
