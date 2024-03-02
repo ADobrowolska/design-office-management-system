@@ -71,7 +71,7 @@ public class ProjectController {
 
     @PutMapping("/projects/assign")
     public ResponseEntity<AssignProjectDTO> editProjectEmployee(@RequestBody ProjectEmployeeDTO projectDTO,
-                                                                @RequestParam(required = false) Integer employeeId) {
+                                                                @RequestParam(required = false) Integer employeeId) throws InstanceAlreadyExistsException {
         AssignProjectDTO receivedAssignProjectDTO = projectFacade.editProjectEmployee(
                 ProjectMapper.mapToProjectModel(projectDTO), employeeId);
         return ResponseEntity.ok(receivedAssignProjectDTO);

@@ -38,4 +38,8 @@ public class AssignProjectService {
         assignProject.setEmployee(employee);
         return assignProjectRepository.save(assignProject);
     }
+
+    public boolean checkIfEmployeeIsAssignedToProject(Integer projectId, Integer employeeId) {
+        return assignProjectRepository.existsByProjectIdAndEmployeeId(projectId, employeeId);
+    }
 }

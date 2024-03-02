@@ -14,6 +14,7 @@ import com.designofficems.designofficemanagementsystem.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,7 +31,8 @@ public class ProjectFacade {
     private final CostService costService;
 
     @Autowired
-    public ProjectFacade(ProjectService projectService, AssignProjectService assignProjectService, EmployeeService employeeService, CostService costService) {
+    public ProjectFacade(ProjectService projectService, AssignProjectService assignProjectService,
+                         EmployeeService employeeService, CostService costService) {
         this.projectService = projectService;
         this.assignProjectService = assignProjectService;
         this.employeeService = employeeService;
@@ -51,11 +53,16 @@ public class ProjectFacade {
         return projectEmployeeDTOs;
     }
 
-    public AssignProjectDTO editProjectEmployee(Project project, Integer employeeId) {
+    public AssignProjectDTO editProjectEmployee(Project project, Integer employeeId) throws InstanceAlreadyExistsException {
         if (projectService.checkIfProjectExists(project)) {
             if (employeeService.checkIfEmployeeExists(employeeId)) {
-                Employee employee = employeeService.getEmployee(employeeId);
-                return AssignProjectMapper.mapToAssignProjectDTO(assignProjectService.assignEmployeeToProject(project, employee));
+                if (!assignProjectService.checkIfEmployeeIsAssignedToProject(project.getId(), employeeId)) {
+                    Employee employee = employeeService.getEmployee(employeeId);
+                    return AssignProjectMapper.mapToAssignProjectDTO(
+                            assignProjectService.assignEmployeeToProject(project, employee));
+                } else {
+                    throw new InstanceAlreadyExistsException("This employee is already assigned to this project");
+                }
             } else {
                 throw new NoSuchElementException("This employee does not exist");
             }

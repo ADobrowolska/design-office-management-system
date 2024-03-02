@@ -12,4 +12,6 @@ public interface AssignProjectRepository extends JpaRepository<AssignProject, In
     List<AssignProject> findAllByProject(Project project);
 
     List<AssignProject> findAllByEmployee(Employee employee);
+
+    boolean existsByProjectIdAndEmployeeId(Integer projectId, Integer employeeId);
 }
