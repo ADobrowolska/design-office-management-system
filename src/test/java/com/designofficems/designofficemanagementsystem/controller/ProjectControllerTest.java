@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -292,7 +293,25 @@ class ProjectControllerTest extends BaseTest {
                 .andExpect(result -> assertEquals("This employee does not exist", result.getResolvedException().getMessage()));
     }
 
+    @Test
+    void shouldEditProjectEmployee_Employee_InstanceAlreadyExistsEx() throws Exception {
+        Department dept = createDepartment();
+        Employee employee = createEmployee("Jan", "Kowalski", dept);
+        Project project = createProject("S19PH", BigDecimal.valueOf(5500000), "proj");
+        List<Employee> employees = new ArrayList<>();
+        assignProjectService.assignEmployeeToProject(project, employee);
+        ProjectEmployeeDTO projectEmployeeDTO = ProjectMapper.mapToProjectEmployeeDTO(project, employees);
 
-
-
+        mockMvc.perform(MockMvcRequestBuilders.put("/projects/assign")
+                        .headers(getAuthorizedHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(projectEmployeeDTO))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("employeeId", "" + employee.getId()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isConflict())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof InstanceAlreadyExistsException))
+                .andExpect(result -> assertEquals("This employee is already assigned to this project",
+                        result.getResolvedException().getMessage()));
+    }
 }
