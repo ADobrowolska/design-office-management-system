@@ -2,17 +2,18 @@ package com.designofficems.designofficemanagementsystem.controller;
 
 import com.designofficems.designofficemanagementsystem.dto.assignproject.AssignProjectDTO;
 import com.designofficems.designofficemanagementsystem.dto.employee.EmployeeMapper;
-import com.designofficems.designofficemanagementsystem.dto.project.CreateProjectDTO;
-import com.designofficems.designofficemanagementsystem.dto.project.ProjectDTO;
-import com.designofficems.designofficemanagementsystem.dto.project.ProjectEmployeeDTO;
-import com.designofficems.designofficemanagementsystem.dto.project.ProjectMapper;
+import com.designofficems.designofficemanagementsystem.dto.project.*;
 import com.designofficems.designofficemanagementsystem.model.Department;
 import com.designofficems.designofficemanagementsystem.model.Employee;
+import com.designofficems.designofficemanagementsystem.model.EmployeeRate;
 import com.designofficems.designofficemanagementsystem.model.Project;
 import com.designofficems.designofficemanagementsystem.repository.DepartmentRepository;
 import com.designofficems.designofficemanagementsystem.repository.EmployeeRepository;
 import com.designofficems.designofficemanagementsystem.repository.ProjectRepository;
 import com.designofficems.designofficemanagementsystem.service.AssignProjectService;
+import com.designofficems.designofficemanagementsystem.service.CostService;
+import com.designofficems.designofficemanagementsystem.service.EmployeeRateService;
+import com.designofficems.designofficemanagementsystem.util.CategoryType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.management.InstanceAlreadyExistsException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -57,6 +59,12 @@ class ProjectControllerTest extends BaseTest {
 
     @Autowired
     private AssignProjectService assignProjectService;
+
+    @Autowired
+    private EmployeeRateService employeeRateService;
+
+    @Autowired
+    private CostService costService;
 
     private Department department;
 
@@ -314,4 +322,34 @@ class ProjectControllerTest extends BaseTest {
                 .andExpect(result -> assertEquals("This employee is already assigned to this project",
                         result.getResolvedException().getMessage()));
     }
+
+    @Test
+    void shouldGetCostPerProject() throws Exception {
+        Department dept = createDepartment();
+        Employee employee = createEmployee("Jan", "Kowalski", dept);
+        Project project = createProject("S19PH", BigDecimal.valueOf(5500000), "proj");
+        List<Employee> employees = new ArrayList<>();
+        assignProjectService.assignEmployeeToProject(project, employee);
+        ProjectEmployeeDTO projectEmployeeDTO = ProjectMapper.mapToProjectEmployeeDTO(project, employees);
+        EmployeeRate employeeRate = new EmployeeRate(1, "JanKowalski_SALARY", CategoryType.SALARY,
+                60, "PLN", employee);
+        employeeRateService.addEmployeeRate(employeeRate);
+        costService.add(project, employee, LocalDate.of(2024, 3, 1), 120L);
+        costService.add(project, employee, LocalDate.of(2024, 3, 2), 60L);
+
+        LocalDate startDate = LocalDate.parse("2024-02-20");
+        LocalDate endDate = LocalDate.now();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/projects/{id}/cost", project.getId())
+                        .headers(getAuthorizedHeader())
+                        .param("startDate", startDate.toString())
+                        .param("endDate", endDate.toString()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        ProjectCostDTO projectCostDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProjectCostDTO.class);
+
+        assertThat(projectCostDTO.getTotal()).isEqualByComparingTo(BigDecimal.valueOf(180));
+    }
+
+
 }

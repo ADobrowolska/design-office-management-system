@@ -39,12 +39,16 @@ public class BaseTest {
     private UserService userService;
 
     @Autowired
+    private CostRepository costRepository;
+
+    @Autowired
     private UserMapper userMapper;
 
     private User currentUser;
     private String token;
 
     protected void setUp() throws Exception {
+        costRepository.deleteAll();
         employeeRateRepository.deleteAll();
         assignProjectRepository.deleteAll();
         projectRepository.deleteAll();
