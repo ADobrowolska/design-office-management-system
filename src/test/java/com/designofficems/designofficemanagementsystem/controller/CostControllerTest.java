@@ -158,7 +158,7 @@ class CostControllerTest extends BaseTest {
     }
 
     @Test
-    void shouldGetCostsPByDay() throws Exception {
+    void shouldGetCostsByDay() throws Exception {
         Department dept = createDepartment();
         Employee employee = createEmployee("Anna", "Nowak", dept);
         Project project1 = createProject("S19", BigDecimal.valueOf(8000000.00), "proj");
