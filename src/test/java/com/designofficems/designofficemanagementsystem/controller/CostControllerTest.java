@@ -157,5 +157,31 @@ class CostControllerTest extends BaseTest {
         assertThat(costs.get(0).getEmployeeRate().getRate()).isEqualTo(50);
     }
 
+    @Test
+    void shouldGetCostsPByDay() throws Exception {
+        Department dept = createDepartment();
+        Employee employee = createEmployee("Anna", "Nowak", dept);
+        Project project1 = createProject("S19", BigDecimal.valueOf(8000000.00), "proj");
+        Project project2 = createProject("S12", BigDecimal.valueOf(6000000.00), "proj");
+        EmployeeRate employeeRateSalary = createEmployeeRate("AN_SALARY", CategoryType.SALARY, 80, "PLN", employee);
+        EmployeeRate employeeRateLicence = createEmployeeRate("AN_LICENCE", CategoryType.LICENCE, 10, "EUR", employee);
+
+        costService.add(project1, employee, LocalDate.now(), 60L);
+        costService.add(project2, employee, LocalDate.now(), 360L);
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/costs/param")
+                        .headers(getAuthorizedHeader())
+                        .param("date", LocalDate.now().toString()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        List<CostDTO> costs = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                new TypeReference<List<CostDTO>>() {
+                });
+        assertThat(costs.size()).isEqualTo(4);
+        assertThat(costs.get(0).getEmployeeRate().getCurrency()).isEqualTo("PLN");
+    }
+
+
+
 
 }
