@@ -1,11 +1,9 @@
 package com.designofficems.designofficemanagementsystem.controller;
 
 import com.designofficems.designofficemanagementsystem.dto.cost.CostDTO;
+import com.designofficems.designofficemanagementsystem.dto.cost.CostMapper;
 import com.designofficems.designofficemanagementsystem.dto.cost.CostRequestDTO;
-import com.designofficems.designofficemanagementsystem.model.Department;
-import com.designofficems.designofficemanagementsystem.model.Employee;
-import com.designofficems.designofficemanagementsystem.model.EmployeeRate;
-import com.designofficems.designofficemanagementsystem.model.Project;
+import com.designofficems.designofficemanagementsystem.model.*;
 import com.designofficems.designofficemanagementsystem.repository.DepartmentRepository;
 import com.designofficems.designofficemanagementsystem.repository.EmployeeRateRepository;
 import com.designofficems.designofficemanagementsystem.repository.EmployeeRepository;
@@ -14,6 +12,7 @@ import com.designofficems.designofficemanagementsystem.service.CostService;
 import com.designofficems.designofficemanagementsystem.util.CategoryType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class CostControllerTest extends BaseTest {
@@ -179,6 +179,32 @@ class CostControllerTest extends BaseTest {
                 });
         assertThat(costs.size()).isEqualTo(4);
         assertThat(costs.get(0).getEmployeeRate().getCurrency()).isEqualTo("PLN");
+    }
+
+    @Test
+    void shouldRemoveCost() throws Exception {
+        Department dept = createDepartment();
+        Employee employee = createEmployee("Anna", "Nowak", dept);
+        Project project = createProject("S19", BigDecimal.valueOf(8000000.00), "proj");
+        EmployeeRate employeeRateSalary = createEmployeeRate("AN_SALARY", CategoryType.SALARY, 80, "PLN", employee);
+        List<Cost> costs = costService.add(project, employee, LocalDate.now(), 120L);
+        MvcResult deleteMvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/costs/" + costs.get(0).getId())
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(204))
+                .andReturn();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/costs")
+                        .headers(getAuthorizedHeader()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        List<CostDTO> costsFetched = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                new TypeReference<List<CostDTO>>() {
+                });
+        assertThat(costs.size()).isEqualTo(1);
+        assertEquals(costs.get(0).getEmployeeRate(), employeeRateSalary);
+        assertThat(costsFetched.size()).isEqualTo(0);
+        assertFalse(costsFetched.contains(CostMapper.mapToCostDTO(costs.get(0))));
     }
 
 
