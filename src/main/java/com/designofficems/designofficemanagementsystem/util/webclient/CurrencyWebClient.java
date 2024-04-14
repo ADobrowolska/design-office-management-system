@@ -12,7 +12,6 @@ public class CurrencyWebClient {
     private WebClient.Builder builder = WebClient.builder().baseUrl("http://api.nbp.pl");
 
     public OpenCurrencyDTO getClientResponse(String code) {
-
         return builder.build()
                 .get()
                 .uri(uriBuilder -> uriBuilder
