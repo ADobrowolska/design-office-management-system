@@ -37,15 +37,6 @@ Database diagram:
 <!-- If you have screenshots you'd like to share, include them here. ![Example screenshot](./img/screenshot.png) -->
 
 
-## Setup
-In order to run this application you will need:
-- Java 17 - Main Backend Language
-- Maven - Dependency Management
-- MySQL - The default RDBMS.
-
-Before starting the application, you will need to set up the database. By default, application attempts to connect to 
-a database called design-office-ms in localhost:3306 or one called design-office-ms-test for tests. You can change 
-the default location and name of the databases in application.properties.
 
 
 
